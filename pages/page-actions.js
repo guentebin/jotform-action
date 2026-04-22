@@ -1,5 +1,5 @@
 /**
- * ACTIONS Page — Jotform-style: list + Add/Edit form
+ * HÀNH ĐỘNG Page — Jotform-style: list + Add/Edit form
  */
 
 import { store } from '../js/store.js';
@@ -34,15 +34,15 @@ export function renderActionsPage(container) {
       <div class="actions-page-header">
         <div class="actions-page-icon"><i data-lucide="flag" class="w-5 h-5"></i></div>
         <div>
-          <div class="actions-page-title">ACTIONS</div>
-          <div class="actions-page-sub">Tell your Agent what to do in specific situations</div>
+          <div class="actions-page-title">HÀNH ĐỘNG</div>
+          <div class="actions-page-sub">Thiết lập quy tắc tự động hóa hành vi của agent.</div>
         </div>
       </div>
 
       <!-- ADD NEW ACTION BUTTON (always visible) -->
       <button class="add-action-main-btn" id="btn-add-new">
         <i data-lucide="plus" class="w-4 h-4"></i>
-        Add new action
+        Thêm quy tắc mới
       </button>
 
       <!-- FORM (visible only when adding/editing) -->
@@ -70,7 +70,7 @@ function renderRuleBuilder() {
     <div class="rule-builder-inner">
       <!-- CHANNELS -->
       <div class="form-field-group">
-        <label class="form-field-label">CHANNELS</label>
+        <label class="form-field-label">KÊNH ÁP DỤNG</label>
         <div class="custom-dropdown" id="dropdown-channels">
           <div class="dropdown-trigger ${activeDropdown === 'channels' ? 'active' : ''}">
             <div class="flex flex-wrap gap-2">
@@ -98,12 +98,12 @@ function renderRuleBuilder() {
 
       ${showLogicBanner ? `
         <div class="logic-banner">
-          <span>IF</span>
+          <span>NẾU</span>
           <select class="logic-select" id="logic-select">
-            <option value="any" ${logic === 'any' ? 'selected' : ''}>ANY</option>
-            <option value="all" ${logic === 'all' ? 'selected' : ''}>ALL</option>
+            <option value="any" ${logic === 'any' ? 'selected' : ''}>BẤT KỲ</option>
+            <option value="all" ${logic === 'all' ? 'selected' : ''}>TẤT CẢ</option>
           </select>
-          <span>OF THE RULES ARE MATCHED</span>
+          <span>điều kiện trên khớp</span>
         </div>` : ''}
 
       <!-- DO ROWS -->
@@ -111,11 +111,11 @@ function renderRuleBuilder() {
         ${dos.map((d, i) => renderDoRow(d, i, dos.length)).join('')}
       </div>
 
-      <!-- FORM ACTIONS -->
+      <!-- FORM HÀNH ĐỘNG -->
       <div class="form-actions">
-        <button class="btn btn-secondary" id="cancel-form">Cancel</button>
+        <button class="btn btn-secondary" id="cancel-form">Hủy</button>
         <button class="btn btn-primary" id="save-rule">
-          ${isEditing ? 'Update' : 'Save'}
+          ${isEditing ? 'Cập nhật' : 'Lưu'}
         </button>
       </div>
     </div>`;
@@ -139,7 +139,7 @@ function renderWhenRow(w, i, total) {
               <div class="flex items-center gap-2">
                 ${cond?.icon ? `<span>${cond.icon}</span>` : ''}
                 <span class="${!w.condition_id ? 'text-text-muted italic' : 'font-semibold'}">
-                  ${cond ? cond.label : 'Search or type a condition'}
+                  ${cond ? cond.label : 'Tìm hoặc nhập điều kiện'}
                 </span>
               </div>
               <div class="flex items-center gap-1">
@@ -149,7 +149,7 @@ function renderWhenRow(w, i, total) {
             </div>
             <div class="dropdown-list ${activeDropdown === ddKey ? 'show' : ''}">
               <div class="dropdown-search">
-                <input type="text" class="input py-1 text-sm search-input" placeholder="Search conditions..."
+                <input type="text" class="input py-1 text-sm search-input" placeholder="Tìm điều kiện..."
                   value="${activeDropdown === ddKey ? searchQuery : ''}">
               </div>
               ${window.WHEN_CONDITIONS
@@ -169,7 +169,7 @@ function renderWhenRow(w, i, total) {
         </div>
       </div>
       <div class="action-row-btns">
-        ${showPlus  ? `<button class="row-action-btn row-add-btn"  data-type="when" id="add-when-btn" title="Add condition">+</button>` : '<span class="row-action-spacer"></span>'}
+        ${showPlus  ? `<button class="row-action-btn row-add-btn"  data-type="when" id="add-when-btn" title="Thêm điều kiện">+</button>` : '<span class="row-action-spacer"></span>'}
         ${showMinus ? `<button class="row-action-btn row-minus-btn" data-type="when" data-index="${i}" title="Remove">−</button>` : '<span class="row-action-spacer"></span>'}
       </div>
     </div>`;
@@ -193,7 +193,7 @@ function renderDoRow(d, i, total) {
               <div class="flex items-center gap-2">
                 ${act?.icon ? `<span>${act.icon}</span>` : ''}
                 <span class="${!d.action_id ? 'text-text-muted italic' : 'font-semibold'}">
-                  ${act ? act.label : 'Search or type an action'}
+                  ${act ? act.label : 'Tìm hoặc nhập hành động'}
                 </span>
               </div>
               <div class="flex items-center gap-1">
@@ -203,7 +203,7 @@ function renderDoRow(d, i, total) {
             </div>
             <div class="dropdown-list ${activeDropdown === ddKey ? 'show' : ''}">
               <div class="dropdown-search">
-                <input type="text" class="input py-1 text-sm search-input" placeholder="Search actions..."
+                <input type="text" class="input py-1 text-sm search-input" placeholder="Tìm hành động..."
                   value="${activeDropdown === ddKey ? searchQuery : ''}">
               </div>
               ${window.DO_ACTIONS
@@ -223,7 +223,7 @@ function renderDoRow(d, i, total) {
         </div>
       </div>
       <div class="action-row-btns">
-        ${showPlus  ? `<button class="row-action-btn row-add-btn" data-type="do" id="add-do-btn" title="Add action">+</button>` : '<span class="row-action-spacer"></span>'}
+        ${showPlus  ? `<button class="row-action-btn row-add-btn" data-type="do" id="add-do-btn" title="Thêm hành động">+</button>` : '<span class="row-action-spacer"></span>'}
         ${showMinus ? `<button class="row-action-btn row-minus-btn" data-type="do" data-index="${i}" title="Remove">−</button>` : '<span class="row-action-spacer"></span>'}
       </div>
     </div>`;
@@ -283,12 +283,12 @@ function renderRuleCard(rule) {
         ${whenLines}
         ${doLines}
         <div class="rule-card-line mt-1">
-          <span class="rc-label rc-channels">CHANNELS</span>
+          <span class="rc-label rc-channels">KÊNH</span>
           <span class="rc-channels-chips">${channelChips}</span>
         </div>
       </div>
       <div class="jf-rule-card-menu">
-        <button class="kebab-btn" data-id="${rule.id}" title="Options">⋮</button>
+        <button class="kebab-btn" data-id="${rule.id}" title="Tùy chọn">⋮</button>
         ${isMenuOpen ? `
           <div class="kebab-dropdown">
             <div class="kebab-item edit-rule-btn" data-id="${rule.id}">
@@ -310,7 +310,7 @@ function renderEmptyState() {
   return `
     <div class="actions-empty">
       <div style="font-size:32px;opacity:0.3">⚡</div>
-      <p>No actions yet. Click <strong>Add new action</strong> to get started.</p>
+      <p>Chưa có quy tắc nào. Nhấn <strong>Thêm quy tắc mới</strong> để bắt đầu.</p>
     </div>`;
 }
 
@@ -362,7 +362,7 @@ function closeForm() {
 
 // ─── EVENTS ───────────────────────────────────────────────────────────────────
 function attachEvents(container) {
-  // ── Add new action button
+  // ── Thêm quy tắc mới button
   container.querySelector('#btn-add-new')?.addEventListener('click', e => {
     e.stopPropagation();
     openForm();
@@ -405,7 +405,7 @@ function attachEvents(container) {
         e.stopPropagation();
         store.deleteRule(btn.dataset.id);
         openMenuId = null;
-        window.showToast && window.showToast('Rule deleted');
+        window.showToast && window.showToast('Đã xóa quy tắc');
         renderActionsPage(container);
       });
     });
@@ -532,7 +532,7 @@ function attachEvents(container) {
 
   // Save
   container.querySelector('#save-rule')?.addEventListener('click', () => {
-    if (!isFormValid()) { window.showToast && window.showToast('Please select a WHEN condition and DO action.', 'error'); return; }
+    if (!isFormValid()) { window.showToast && window.showToast('Vui lòng chọn điều kiện KHI và hành động THỰC HIỆN.', 'error'); return; }
     const payload = {
       channels: currentFormState.channels,
       whens: currentFormState.whens.filter(w => w.condition_id),
@@ -541,10 +541,10 @@ function attachEvents(container) {
     };
     if (editingRuleId) {
       store.updateRule(editingRuleId, payload);
-      window.showToast && window.showToast('✓ Rule updated');
+      window.showToast && window.showToast('✓ Đã cập nhật quy tắc');
     } else {
       store.addRule(payload);
-      window.showToast && window.showToast('✓ Rule saved');
+      window.showToast && window.showToast('✓ Đã lưu quy tắc');
     }
     closeForm();
     renderActionsPage(container);
