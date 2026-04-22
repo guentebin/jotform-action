@@ -1,20 +1,83 @@
 :root {
-  --primary-purple: #2d1b69;
-  --accent-orange: #ff6100;
-  --accent-green: #22c55e;
-  --sidebar-dark: #1e1e2e;
-  --bg-light: #f3f3f5;
-  --border-light: #e6e6e6;
-  --text-main: #2c3345;
-  --text-muted: #6f76a7;
+  /* ── Font (MISA: Inter only) ── */
+  --font-main: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+
+  /* ── MISA Brand Colors ── */
+  --brand-600: #1d4ed8;
+  --brand-500: #2563eb;
+  --brand-400: #3b82f6;
+  --brand-200: #bfdbfe;
+  --brand-100: #dbeafe;
+  --brand-50:  #eff6ff;
+
+  /* ── Semantic colors ── */
+  --color-info:    #0ea5e9;
+  --color-info-bg: #f0f9ff;
+  --color-warning: #f59e0b;
+  --color-warning-bg: #fffbeb;
+  --color-danger:  #ef4444;
+  --color-danger-bg: #fef2f2;
+  --color-success: #22c55e;
+  --color-success-bg: #f0fdf4;
+
+  /* ── Neutral palette ── */
+  --neutral-900: #111827;
+  --neutral-800: #1f2937;
+  --neutral-700: #374151;
+  --neutral-600: #4b5563;
+  --neutral-500: #6b7280;
+  --neutral-400: #9ca3af;
+  --neutral-300: #d1d5db;
+  --neutral-200: #e5e7eb;
+  --neutral-100: #f3f4f6;
+  --neutral-50:  #f9fafb;
+
+  /* ── Semantic Text ── */
+  --text-primary:   var(--neutral-900);
+  --text-secondary: var(--neutral-700);
+  --text-muted:     var(--neutral-500);
+  --text-disabled:  var(--neutral-400);
+  --text-placeholder: var(--neutral-400);
+
+  /* ── Semantic Stroke/Border ── */
+  --stroke-default: var(--neutral-200);
+  --stroke-strong:  var(--neutral-300);
+  --stroke-focus:   var(--brand-500);
+  --stroke-error:   var(--color-danger);
+  --border-light: var(--neutral-200);
+
+  /* ── Semantic Background ── */
+  --bg-page:    #f5f5f8;
+  --bg-light:   #f5f5f8;
+  --bg-surface: #ffffff;
+  --bg-hover:   var(--neutral-100);
+  --bg-active:  var(--brand-50);
+
+  /* ── Legacy aliases (backward compat) ── */
+  --primary-purple: var(--brand-500);
+  --accent-orange:  #f97316;
+  --accent-green:   var(--color-success);
   --white: #ffffff;
-  
+  --text-main: var(--text-primary);
+
+  /* ── Radius (MISA: 8px standard) ── */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
-  
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  
-  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+  --radius-xl: 16px;
+
+  /* ── Spacing (4px grid) ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ── Shadows ── */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.10);
+  --shadow-dropdown: 0 8px 24px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
 }

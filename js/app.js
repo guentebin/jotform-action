@@ -26,31 +26,32 @@ const pageRenderers = {
   teach: (container) => container.innerHTML = '<div class="fade-in"><h1>HUẤN LUYỆN</h1><p class="text-text-muted mt-4">Công cụ học tập và tinh chỉnh đang được phát triển...</p></div>'
 };
 
-// Toast Utility
-window.showToast = (message, type = 'success') => {
+// Toast Utility — MISA standard (4 types, 5s, max 3, top-right)
+const TOAST_ICONS = { success: 'check-circle', error: 'x-circle', warning: 'alert-triangle', info: 'info' };
+window.showToast = (message, type = 'success', duration = 5000) => {
   let container = document.querySelector('.toast-container');
   if (!container) {
     container = document.createElement('div');
     container.className = 'toast-container';
     document.body.appendChild(container);
   }
-  
+  while (container.children.length >= 3) container.firstChild?.remove();
   const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.innerHTML = `
-    ${type === 'success' ? '<i data-lucide="check-circle" class="w-4 h-4"></i>' : '<i data-lucide="alert-circle" class="w-4 h-4"></i>'}
-    <span>${message}</span>
-  `;
+  toast.className = 'toast toast-' + type;
+  const icon = TOAST_ICONS[type] || 'info';
+  toast.innerHTML = '<i data-lucide="' + icon + '" class="toast-icon w-4 h-4 flex-shrink-0"></i><span>' + message + '</span>';
   container.appendChild(toast);
-  
   if (window.lucide) window.lucide.createIcons();
-  
   setTimeout(() => {
     toast.style.opacity = '0';
-    toast.style.transform = 'translateY(10px)';
+    toast.style.transform = 'translateX(20px)';
     setTimeout(() => toast.remove(), 300);
-  }, type === 'success' ? 2000 : 3000);
+  }, duration);
 };
+/**
+ * @license
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 function init() {
   renderSidebar();
