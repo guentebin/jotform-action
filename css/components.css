@@ -194,13 +194,13 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Rule Builder Specifics */
 .rule-builder-card { border-top: 4px solid var(--primary-purple); }
-.builder-section { padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-light); margin-bottom: 30px; }
+.builder-section { padding: 10px 10px 6px 10px; border-radius: var(--radius-md); border: 1px solid var(--border-light); margin-bottom: 10px; }
 .section-when { border-left: 4px solid #0369a1; background: #f0f9ff; }
 .section-do { border-left: 4px solid #7e22ce; background: #faf5ff; }
 
 .section-label { display: flex; align-items: center; gap: 8px; margin-bottom: 15px; }
 
-.params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px; }
+.params-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
 .params-full { grid-column: span 2; }
 
 /* Multi-select Tags */
@@ -318,8 +318,9 @@ input:checked + .slider:before { transform: translateX(20px); }
 .logic-banner {
   display: flex; align-items: center; gap: 8px;
   background: #1e1e2e; color: white;
-  padding: 8px 16px; border-radius: 8px;
+  padding: 10px 16px; border-radius: 8px;
   font-size: 13px; font-weight: 500;
+  margin: 8px 0;
 }
 .logic-select {
   background: rgba(255,255,255,0.15); color: white;
@@ -352,7 +353,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   display: flex;
   align-items: flex-start;
   gap: 0;
-  margin-bottom: 2px;
+  margin-bottom: 8px;
 }
 .action-row-left {
   flex: 1;
@@ -367,21 +368,21 @@ input:checked + .slider:before { transform: translateX(20px); }
 .section-do   .action-row-left { border-left-color: var(--color-do, #8b5cf6); }
 .action-row-label {
   flex-shrink: 0;
-  padding-top: 10px;
-  min-width: 56px;
+  padding-top: 8px;
+  min-width: 54px;
 }
 .action-row-content {
   flex: 1;
   min-width: 0;
-  padding: 8px 0;
+  padding: 4px 0 6px 0;
 }
 .action-row-btns {
   display: flex;
   flex-direction: column;
   gap: 2px;
   align-items: center;
-  padding-top: 8px;
-  padding-left: 8px;
+  padding-top: 7px;
+  padding-left: 6px;
   flex-shrink: 0;
 }
 .row-action-spacer { width: 26px; height: 26px; display: block; }

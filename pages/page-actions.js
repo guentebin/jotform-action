@@ -79,7 +79,7 @@ function renderRuleBuilder() {
     <div class="card rule-builder-card">
 
       <!-- CHANNELS -->
-      <div class="mb-8">
+      <div class="mb-4">
         <h3 class="text-xs font-bold uppercase text-text-muted mb-3">KÊNH ÁP DỤNG</h3>
         <div class="custom-dropdown" id="dropdown-channels">
           <div class="dropdown-trigger ${activeDropdown === 'channels' ? 'active' : ''}">
@@ -102,7 +102,7 @@ function renderRuleBuilder() {
       </div>
 
       <!-- WHEN SECTION -->
-      <div class="builder-section section-when mb-2">
+      <div class="builder-section section-when">
         ${whens.map((w, i) => renderWhenRow(w, i, whens.length)).join('')}
       </div>
 
@@ -117,7 +117,7 @@ function renderRuleBuilder() {
         </div>` : ''}
 
       <!-- DO SECTION -->
-      <div class="builder-section section-do mt-2 mb-6">
+      <div class="builder-section section-do">
         ${dos.map((d, i) => renderDoRow(d, i, dos.length)).join('')}
       </div>
 
