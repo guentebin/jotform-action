@@ -437,3 +437,98 @@ input:checked + .slider:before { transform: translateX(20px); }
   min-width: 24px;
   text-align: center;
 }
+
+/* ── Actions Page ─────────────────────────────────────────────────────── */
+.actions-page { max-width: 860px; margin: 0 auto; padding: 28px 32px 60px; }
+.actions-page-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+.actions-page-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--primary-purple, #2d1b69);
+  display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0;
+}
+.actions-page-title  { font-size: 15px; font-weight: 800; letter-spacing: 0.04em; color: var(--text-main); }
+.actions-page-sub    { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+/* Add new action button */
+.add-action-main-btn {
+  width: 100%; padding: 13px;
+  background: #1a73e8; color: white;
+  border: none; border-radius: 8px;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: background 0.15s; margin-bottom: 20px;
+}
+.add-action-main-btn:hover { background: #1557b0; }
+
+/* Form panel */
+.action-form-panel {
+  background: white;
+  border: 1px solid var(--border-light, #e2e2ee);
+  border-radius: 12px;
+  margin-bottom: 24px;
+  padding: 20px;
+}
+.rule-builder-inner { display: flex; flex-direction: column; gap: 12px; }
+.form-field-group { display: flex; flex-direction: column; gap: 6px; }
+.form-field-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+.form-actions { display: flex; justify-content: flex-end; gap: 10px; padding-top: 4px; }
+
+/* Jotform-style rule card */
+.jf-rule-card {
+  display: flex; align-items: flex-start;
+  background: white;
+  border: 1px solid var(--border-light, #e2e2ee);
+  border-left: 4px solid #1a73e8;
+  border-radius: 8px;
+  padding: 14px 12px 14px 16px;
+  gap: 8px;
+  transition: box-shadow 0.15s;
+  margin-bottom: 10px;
+}
+.jf-rule-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.jf-rule-card--off { opacity: 0.5; border-left-color: #9ca3af; }
+.jf-rule-card-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.jf-rule-card-menu { position: relative; flex-shrink: 0; }
+
+.rule-card-line { display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; font-size: 13px; }
+.rc-label { font-size: 11px; font-weight: 800; letter-spacing: 0.04em; flex-shrink: 0; }
+.rc-when     { color: #1a73e8; }
+.rc-do       { color: #7c3aed; }
+.rc-channels { color: #374151; }
+.rc-text     { font-size: 13px; color: var(--text-main); }
+.rc-value    { font-size: 12px; color: var(--text-muted); font-style: italic; }
+.rule-logic-inline { font-size: 10px; font-weight: 700; background: #eff6ff; color: #2563eb; padding: 1px 5px; border-radius: 6px; }
+.rc-channels-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.rc-channel-chip { background: #f3f4f6; color: #374151; font-size: 11px; padding: 2px 8px; border-radius: 10px; border: 1px solid #e5e7eb; }
+
+/* Kebab menu */
+.kebab-btn {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: transparent; border: none; cursor: pointer;
+  font-size: 18px; color: #6b7280; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.12s;
+}
+.kebab-btn:hover { background: #f3f4f6; color: #1a1a2e; }
+.kebab-dropdown {
+  position: absolute; right: 0; top: 32px; z-index: 200;
+  background: white; border: 1px solid #e5e7eb; border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12); min-width: 130px;
+  overflow: hidden;
+}
+.kebab-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 14px; font-size: 13px; cursor: pointer;
+  color: #374151; transition: background 0.1s;
+}
+.kebab-item:hover { background: #f9fafb; }
+.kebab-item.danger { color: #dc2626; }
+.kebab-item.danger:hover { background: #fef2f2; }
+
+/* Empty + scenario groups */
+.actions-empty { text-align: center; padding: 40px; color: #9ca3af; font-size: 14px; }
+.rules-content { margin-top: 4px; }
+.scenario-group { margin-bottom: 8px; }
+.scenario-divider { display: flex; align-items: center; gap: 10px; margin: 20px 0 10px; }
+.scenario-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b7280; white-space: nowrap; background: var(--bg-light); padding: 0 4px; }
+.rules-list {}

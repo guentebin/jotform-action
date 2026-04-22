@@ -1,12 +1,15 @@
 /**
- * ACTIONS Page: WHEN/DO Rule Builder — Multiple conditions + actions
+ * ACTIONS Page — Jotform-style: list + Add/Edit form
  */
 
 import { store } from '../js/store.js';
 
-let editingRuleId = null;
-let activeDropdown = null; // 'channels' | 'when-N' | 'do-N'
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let editingRuleId = null;    // null = closed | string = editing rule id
+let formOpen = false;        // true = form visible
+let activeDropdown = null;
 let searchQuery = '';
+let openMenuId = null;       // rule id with ⋮ menu open
 
 function freshState() {
   return {
@@ -24,10 +27,10 @@ export function renderActionsPage(container) {
   const rules = store.getRules();
 
   const scenarios = {
-    mine:       { label: '📝 Quy tắc của tôi',        items: [] },
-    sales:      { label: '🛒 Sales Assistant',         items: [] },
-    support:    { label: '🎧 Customer Support',        items: [] },
-    healthcare: { label: '🏥 Healthcare / Booking',    items: [] },
+    mine:       { label: '📝 Quy tắc của tôi',     items: [] },
+    sales:      { label: '🛒 Sales Assistant',       items: [] },
+    support:    { label: '🎧 Customer Support',      items: [] },
+    healthcare: { label: '🏥 Healthcare / Booking',  items: [] },
   };
   rules.forEach(rule => {
     const key = rule.scenario || 'mine';
@@ -36,33 +39,44 @@ export function renderActionsPage(container) {
   });
 
   const renderGroup = (g) => g.items.length === 0 ? '' : `
-    <div class="scenario-group mb-8">
-      <div class="scenario-header flex items-center gap-4 mb-4">
+    <div class="scenario-group">
+      <div class="scenario-divider">
         <span class="h-px bg-gray-200 flex-1"></span>
-        <span class="text-[11px] font-bold uppercase tracking-widest text-text-muted bg-slate-50 px-3 py-1 rounded-full border border-gray-100">${g.label}</span>
+        <span class="scenario-label">${g.label}</span>
         <span class="h-px bg-gray-200 flex-1"></span>
       </div>
-      <div class="space-y-4">${g.items.map(renderRuleCard).join('')}</div>
+      <div class="rules-list">${g.items.map(renderRuleCard).join('')}</div>
     </div>`;
 
   container.innerHTML = `
-    <div class="fade-in max-w-5xl mx-auto">
-      <div class="section-title-area">
-        <h1>HÀNH ĐỘNG</h1>
-        <p class="text-text-muted">Thiết lập quy tắc tự động hóa hành vi của agent.</p>
-      </div>
-      <div id="rule-builder-container" class="mb-10">${renderRuleBuilder()}</div>
-      <div class="rules-section-header">
-        <div class="rules-section-title">
-          <span class="rules-section-icon">⚡</span>
-          <h2>QUY TẮC ĐÃ LƯU</h2>
-          <span class="rules-count-badge">${rules.length}</span>
+    <div class="fade-in actions-page">
+
+      <!-- PAGE HEADER -->
+      <div class="actions-page-header">
+        <div class="actions-page-icon"><i data-lucide="flag" class="w-5 h-5"></i></div>
+        <div>
+          <div class="actions-page-title">ACTIONS</div>
+          <div class="actions-page-sub">Tell your Agent what to do in specific situations</div>
         </div>
       </div>
-      <div id="rules-list" class="pb-20">
+
+      <!-- ADD NEW ACTION BUTTON (always visible) -->
+      <button class="add-action-main-btn" id="btn-add-new">
+        <i data-lucide="plus" class="w-4 h-4"></i>
+        Add new action
+      </button>
+
+      <!-- FORM (visible only when adding/editing) -->
+      ${formOpen ? `
+        <div class="action-form-panel" id="action-form-panel">
+          ${renderRuleBuilder()}
+        </div>` : ''}
+
+      <!-- RULES LIST -->
+      <div class="rules-content">
         ${rules.length > 0
           ? Object.values(scenarios).map(renderGroup).join('')
-          : renderEmptyState()}
+          : (!formOpen ? renderEmptyState() : '')}
       </div>
     </div>`;
 
@@ -71,16 +85,15 @@ export function renderActionsPage(container) {
 
 // ─── RULE BUILDER ─────────────────────────────────────────────────────────────
 function renderRuleBuilder() {
-  const isEditing = !!editingRuleId;
   const { whens, logic, dos, channels } = currentFormState;
+  const isEditing = !!editingRuleId;
   const showLogicBanner = whens.length >= 2;
 
   return `
-    <div class="card rule-builder-card">
-
+    <div class="rule-builder-inner">
       <!-- CHANNELS -->
-      <div class="mb-4">
-        <h3 class="text-xs font-bold uppercase text-text-muted mb-3">KÊNH ÁP DỤNG</h3>
+      <div class="form-field-group">
+        <label class="form-field-label">CHANNELS</label>
         <div class="custom-dropdown" id="dropdown-channels">
           <div class="dropdown-trigger ${activeDropdown === 'channels' ? 'active' : ''}">
             <div class="flex flex-wrap gap-2">
@@ -101,13 +114,13 @@ function renderRuleBuilder() {
         </div>
       </div>
 
-      <!-- WHEN SECTION -->
+      <!-- WHEN ROWS -->
       <div class="builder-section section-when">
         ${whens.map((w, i) => renderWhenRow(w, i, whens.length)).join('')}
       </div>
 
       ${showLogicBanner ? `
-        <div class="logic-banner my-3">
+        <div class="logic-banner">
           <span>IF</span>
           <select class="logic-select" id="logic-select">
             <option value="any" ${logic === 'any' ? 'selected' : ''}>ANY</option>
@@ -116,23 +129,27 @@ function renderRuleBuilder() {
           <span>OF THE RULES ARE MATCHED</span>
         </div>` : ''}
 
-      <!-- DO SECTION -->
+      <!-- DO ROWS -->
       <div class="builder-section section-do">
         ${dos.map((d, i) => renderDoRow(d, i, dos.length)).join('')}
       </div>
 
-      <div class="flex justify-end gap-3">
-        ${isEditing ? `<button class="btn btn-secondary" id="cancel-edit">Hủy</button>` : ''}
-        <button class="btn btn-primary" id="save-rule">${isEditing ? 'Cập nhật quy tắc' : 'Lưu quy tắc'}</button>
+      <!-- FORM ACTIONS -->
+      <div class="form-actions">
+        <button class="btn btn-secondary" id="cancel-form">Cancel</button>
+        <button class="btn btn-primary" id="save-rule">
+          ${isEditing ? 'Update' : 'Save'}
+        </button>
       </div>
     </div>`;
 }
 
+// ─── WHEN ROW ─────────────────────────────────────────────────────────────────
 function renderWhenRow(w, i, total) {
   const cond = window.WHEN_CONDITIONS.find(c => c.id === w.condition_id);
   const ddKey = `when-${i}`;
   const isLast = i === total - 1;
-  const showPlus = isLast && canAddWhen();
+  const showPlus  = isLast && canAddWhen();
   const showMinus = total > 1;
 
   return `
@@ -155,7 +172,7 @@ function renderWhenRow(w, i, total) {
             </div>
             <div class="dropdown-list ${activeDropdown === ddKey ? 'show' : ''}">
               <div class="dropdown-search">
-                <input type="text" class="input py-1 text-sm search-input" placeholder="Tìm điều kiện..."
+                <input type="text" class="input py-1 text-sm search-input" placeholder="Search conditions..."
                   value="${activeDropdown === ddKey ? searchQuery : ''}">
               </div>
               ${window.WHEN_CONDITIONS
@@ -175,17 +192,18 @@ function renderWhenRow(w, i, total) {
         </div>
       </div>
       <div class="action-row-btns">
-        ${showPlus  ? `<button class="row-action-btn row-add-btn"  data-type="when" id="add-when-btn"   title="Add condition">+</button>` : '<span class="row-action-spacer"></span>'}
+        ${showPlus  ? `<button class="row-action-btn row-add-btn"  data-type="when" id="add-when-btn" title="Add condition">+</button>` : '<span class="row-action-spacer"></span>'}
         ${showMinus ? `<button class="row-action-btn row-minus-btn" data-type="when" data-index="${i}" title="Remove">−</button>` : '<span class="row-action-spacer"></span>'}
       </div>
     </div>`;
 }
 
+// ─── DO ROW ───────────────────────────────────────────────────────────────────
 function renderDoRow(d, i, total) {
   const act = window.DO_ACTIONS.find(a => a.id === d.action_id);
   const ddKey = `do-${i}`;
   const isLast = i === total - 1;
-  const showPlus = isLast && canAddDo();
+  const showPlus  = isLast && canAddDo();
   const showMinus = total > 1;
 
   return `
@@ -208,7 +226,7 @@ function renderDoRow(d, i, total) {
             </div>
             <div class="dropdown-list ${activeDropdown === ddKey ? 'show' : ''}">
               <div class="dropdown-search">
-                <input type="text" class="input py-1 text-sm search-input" placeholder="Tìm hành động..."
+                <input type="text" class="input py-1 text-sm search-input" placeholder="Search actions..."
                   value="${activeDropdown === ddKey ? searchQuery : ''}">
               </div>
               ${window.DO_ACTIONS
@@ -229,7 +247,7 @@ function renderDoRow(d, i, total) {
       </div>
       <div class="action-row-btns">
         ${showPlus  ? `<button class="row-action-btn row-add-btn" data-type="do" id="add-do-btn" title="Add action">+</button>` : '<span class="row-action-spacer"></span>'}
-        ${showMinus ? `<button class="row-action-btn row-minus-btn" data-type="do" data-index="${i}" title="Remove">&#8722;</button>` : '<span class="row-action-spacer"></span>'}
+        ${showMinus ? `<button class="row-action-btn row-minus-btn" data-type="do" data-index="${i}" title="Remove">−</button>` : '<span class="row-action-spacer"></span>'}
       </div>
     </div>`;
 }
@@ -249,83 +267,73 @@ function renderParamsFields(params, type, rowIndex, currentParams) {
     </div>`).join('');
 }
 
-// ─── RULE CARD ────────────────────────────────────────────────────────────────
+// ─── RULE CARD (Jotform style) ────────────────────────────────────────────────
 function renderRuleCard(rule) {
   const truncate = (s, n) => s && s.length > n ? s.slice(0, n - 1) + '…' : (s || '');
   const whens = rule.whens || [];
   const dos   = rule.dos   || [];
   const logic = rule.logic || 'any';
+  const isMenuOpen = openMenuId === rule.id;
 
-  const logicBadge = whens.length > 1
-    ? `<span class="rule-logic-badge-${logic === 'any' ? 'or' : 'and'}">${logic === 'any' ? 'HOẶC' : 'VÀ'}</span>`
-    : '';
-
-  const whenRows = whens.map((w, i) => {
+  const whenLines = whens.map((w, i) => {
     const cond = window.WHEN_CONDITIONS.find(c => c.id === w.condition_id);
-    const label = cond ? cond.label : w.condition_id;
-    const val = Object.values(w.params || {}).join(', ');
-    return `
-      <div class="flex items-center gap-2 flex-wrap">
-        ${i > 0 ? logicBadge : ''}
-        <span class="badge badge-when">KHI</span>
-        <span class="rule-summary-text">${label}</span>
-        ${val ? `<span class="text-xs text-text-muted font-mono italic">"${truncate(val, 40)}"</span>` : ''}
-      </div>`;
+    const val  = Object.values(w.params || {}).join(', ');
+    const logicLabel = i > 0 ? `<span class="rule-logic-inline">${logic === 'any' ? 'OR' : 'AND'}</span> ` : '';
+    return `<div class="rule-card-line">
+      ${logicLabel}<span class="rc-label rc-when">WHEN</span>
+      <span class="rc-text">${cond ? cond.label : w.condition_id}</span>
+      ${val ? `<span class="rc-value">${truncate(val, 40)}</span>` : ''}
+    </div>`;
   }).join('');
 
-  const doRows = dos.map(d => {
+  const doLines = dos.map(d => {
     const act = window.DO_ACTIONS.find(a => a.id === d.action_id);
-    const label = act ? act.label : d.action_id;
     const val = Object.values(d.params || {}).filter(v => typeof v === 'string').join(', ');
-    return `
-      <div class="flex items-center gap-2 flex-wrap">
-        <span class="badge badge-do">THỰC HIỆN</span>
-        <span class="rule-summary-text">${label}</span>
-        ${val ? `<span class="text-xs text-text-muted font-mono italic">"${truncate(val, 40)}"</span>` : ''}
-      </div>`;
+    return `<div class="rule-card-line">
+      <span class="rc-label rc-do">${act ? act.label.toUpperCase() : 'DO'}</span>
+      ${val ? `<span class="rc-value">${truncate(val, 45)}</span>` : ''}
+    </div>`;
   }).join('');
 
-  const channelIcons = (rule.channels || []).map(cid => {
+  const channelChips = (rule.channels || []).map(cid => {
     const chan = window.CHANNELS.find(c => c.id === cid);
-    return chan ? `<span title="${chan.label}">${chan.icon}</span>` : '';
+    return chan ? `<span class="rc-channel-chip">${chan.icon} ${chan.label}</span>` : '';
   }).join('');
 
   return `
-    <div class="card rule-card ${!rule.enabled ? 'disabled' : ''}" data-id="${rule.id}">
-      <div class="flex items-start justify-between gap-4">
-        <div class="flex-1 space-y-3 min-w-0">
-          <div class="rule-when-list space-y-1">${whenRows}</div>
-          <div class="rule-do-list space-y-1">${doRows}</div>
-        </div>
-        <div class="flex items-center gap-3 flex-shrink-0">
-          <div class="flex gap-1">${channelIcons}</div>
-          <label class="toggle-switch">
-            <input type="checkbox" class="toggle-rule" ${rule.enabled ? 'checked' : ''}>
-            <span class="slider"></span>
-          </label>
-          <div class="flex gap-1 action-buttons">
-            <button class="btn btn-icon edit-btn" title="Chỉnh sửa"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-            <button class="btn btn-icon delete-btn text-red-500" title="Xóa"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-          </div>
-          <div class="hidden confirm-delete-area flex items-center gap-2">
-            <span class="text-[10px] font-bold text-red-600 uppercase">Xác nhận?</span>
-            <button class="btn btn-xs btn-primary bg-red-600 border-red-600 confirm-delete" style="padding:2px 8px;font-size:10px">Xóa</button>
-            <button class="btn btn-xs btn-secondary cancel-delete" style="padding:2px 8px;font-size:10px">Hủy</button>
-          </div>
+    <div class="jf-rule-card ${!rule.enabled ? 'jf-rule-card--off' : ''}" data-id="${rule.id}">
+      <div class="jf-rule-card-body">
+        ${whenLines}
+        ${doLines}
+        <div class="rule-card-line mt-1">
+          <span class="rc-label rc-channels">CHANNELS</span>
+          <span class="rc-channels-chips">${channelChips}</span>
         </div>
       </div>
-      <div class="rule-meta mt-2">
-        <span>Tạo lúc: ${new Date(rule.created_at || Date.now()).toLocaleDateString('vi-VN')}</span>
+      <div class="jf-rule-card-menu">
+        <button class="kebab-btn" data-id="${rule.id}" title="Options">⋮</button>
+        ${isMenuOpen ? `
+          <div class="kebab-dropdown">
+            <div class="kebab-item edit-rule-btn" data-id="${rule.id}">
+              <i data-lucide="edit-2" class="w-3 h-3"></i> Edit
+            </div>
+            <div class="kebab-item toggle-rule-btn" data-id="${rule.id}">
+              <i data-lucide="${rule.enabled ? 'eye-off' : 'eye'}" class="w-3 h-3"></i>
+              ${rule.enabled ? 'Disable' : 'Enable'}
+            </div>
+            <div class="kebab-item delete-rule-btn danger" data-id="${rule.id}">
+              <i data-lucide="trash-2" class="w-3 h-3"></i> Delete
+            </div>
+          </div>` : ''}
       </div>
     </div>`;
 }
 
 function renderEmptyState() {
   return `
-    <div class="text-center py-16 opacity-30">
-      <i data-lucide="zap-off" class="w-16 h-16 mx-auto mb-4"></i>
-      <p class="font-bold italic">Chưa có quy tắc nào.</p>
-      <p class="text-sm mt-2">Dùng form phía trên để tạo quy tắc đầu tiên.</p>
+    <div class="actions-empty">
+      <div style="font-size:32px;opacity:0.3">⚡</div>
+      <p>No actions yet. Click <strong>Add new action</strong> to get started.</p>
     </div>`;
 }
 
@@ -334,91 +342,155 @@ function canAddWhen() {
   const last = currentFormState.whens[currentFormState.whens.length - 1];
   if (!last.condition_id) return false;
   const cond = window.WHEN_CONDITIONS.find(c => c.id === last.condition_id);
-  if (!cond) return false;
-  // All required params must be filled
-  return !cond.params?.some(p => !last.params[p.key]);
+  return !cond?.params?.some(p => !last.params[p.key]);
 }
 
 function canAddDo() {
   const last = currentFormState.dos[currentFormState.dos.length - 1];
   if (!last.action_id) return false;
   const act = window.DO_ACTIONS.find(a => a.id === last.action_id);
-  if (!act) return false;
-  return !act.params?.some(p => p.type !== 'select' && !last.params[p.key]);
+  return !act?.params?.some(p => p.type !== 'select' && !last.params[p.key]);
 }
 
 function isFormValid() {
-  // At least 1 WHEN with condition selected
-  if (!currentFormState.whens.some(w => w.condition_id)) return false;
-  // At least 1 DO with action selected
-  if (!currentFormState.dos.some(d => d.action_id)) return false;
-  return true;
+  return currentFormState.whens.some(w => w.condition_id) &&
+         currentFormState.dos.some(d => d.action_id);
+}
+
+function openForm(ruleId = null) {
+  if (ruleId) {
+    const rule = store.getRuleById(ruleId);
+    if (!rule) return;
+    editingRuleId = ruleId;
+    currentFormState = {
+      channels: [...(rule.channels || ['all'])],
+      whens: JSON.parse(JSON.stringify(rule.whens || [{ condition_id: '', params: {} }])),
+      logic: rule.logic || 'any',
+      dos:   JSON.parse(JSON.stringify(rule.dos   || [{ action_id: '', params: {} }])),
+    };
+  } else {
+    editingRuleId = null;
+    currentFormState = freshState();
+  }
+  formOpen = true;
+  openMenuId = null;
+}
+
+function closeForm() {
+  formOpen = false;
+  editingRuleId = null;
+  currentFormState = freshState();
+  activeDropdown = null;
 }
 
 // ─── EVENTS ───────────────────────────────────────────────────────────────────
 function attachEvents(container) {
-  // ── Channels dropdown toggle
-  const chTrigger = container.querySelector('#dropdown-channels .dropdown-trigger');
-  if (chTrigger) {
-    chTrigger.addEventListener('click', e => {
+  // ── Add new action button
+  container.querySelector('#btn-add-new')?.addEventListener('click', e => {
+    e.stopPropagation();
+    openForm();
+    renderActionsPage(container);
+    // Scroll form into view
+    setTimeout(() => container.querySelector('.action-form-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  });
+
+  if (!formOpen) {
+    // ── Kebab menu buttons
+    container.querySelectorAll('.kebab-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const id = btn.dataset.id;
+        openMenuId = openMenuId === id ? null : id;
+        renderActionsPage(container);
+      });
+    });
+
+    container.querySelectorAll('.edit-rule-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        openForm(btn.dataset.id);
+        renderActionsPage(container);
+        setTimeout(() => container.querySelector('.action-form-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+      });
+    });
+
+    container.querySelectorAll('.toggle-rule-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        store.toggleRuleEnabled(btn.dataset.id);
+        openMenuId = null;
+        renderActionsPage(container);
+      });
+    });
+
+    container.querySelectorAll('.delete-rule-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        store.deleteRule(btn.dataset.id);
+        openMenuId = null;
+        window.showToast && window.showToast('Rule deleted');
+        renderActionsPage(container);
+      });
+    });
+
+    // Close kebab on outside click
+    const closeMenu = () => { if (openMenuId) { openMenuId = null; renderActionsPage(container); } };
+    document.removeEventListener('click', closeMenu);
+    document.addEventListener('click', closeMenu);
+    if (window.lucide) window.lucide.createIcons();
+    return;
+  }
+
+  // ── Form events (only when form is open) ──────────────────────────────────
+
+  // Channels dropdown
+  container.querySelector('#dropdown-channels .dropdown-trigger')?.addEventListener('click', e => {
+    e.stopPropagation();
+    activeDropdown = activeDropdown === 'channels' ? null : 'channels';
+    searchQuery = '';
+    renderActionsPage(container);
+  });
+
+  // WHEN/DO row dropdowns
+  currentFormState.whens.forEach((_, i) => {
+    container.querySelector(`#dropdown-when-${i} .dropdown-trigger`)?.addEventListener('click', e => {
       e.stopPropagation();
-      activeDropdown = activeDropdown === 'channels' ? null : 'channels';
+      const key = `when-${i}`;
+      activeDropdown = activeDropdown === key ? null : key;
       searchQuery = '';
       renderActionsPage(container);
     });
-  }
-
-  // ── WHEN/DO row dropdowns
-  currentFormState.whens.forEach((_, i) => {
-    const trigger = container.querySelector(`#dropdown-when-${i} .dropdown-trigger`);
-    if (trigger) {
-      trigger.addEventListener('click', e => {
-        e.stopPropagation();
-        const key = `when-${i}`;
-        activeDropdown = activeDropdown === key ? null : key;
-        searchQuery = '';
-        renderActionsPage(container);
-      });
-    }
   });
   currentFormState.dos.forEach((_, i) => {
-    const trigger = container.querySelector(`#dropdown-do-${i} .dropdown-trigger`);
-    if (trigger) {
-      trigger.addEventListener('click', e => {
-        e.stopPropagation();
-        const key = `do-${i}`;
-        activeDropdown = activeDropdown === key ? null : key;
-        searchQuery = '';
-        renderActionsPage(container);
-      });
-    }
+    container.querySelector(`#dropdown-do-${i} .dropdown-trigger`)?.addEventListener('click', e => {
+      e.stopPropagation();
+      const key = `do-${i}`;
+      activeDropdown = activeDropdown === key ? null : key;
+      searchQuery = '';
+      renderActionsPage(container);
+    });
   });
 
-  // ── Close dropdowns on outside click
-  const closeAll = () => {
-    if (activeDropdown) { activeDropdown = null; renderActionsPage(container); }
-    container.querySelectorAll('.confirm-delete-area').forEach(el => el.classList.add('hidden'));
-    container.querySelectorAll('.action-buttons').forEach(el => el.classList.remove('hidden'));
-  };
+  // Close dropdowns
+  const closeAll = () => { if (activeDropdown) { activeDropdown = null; renderActionsPage(container); } };
   document.removeEventListener('click', closeAll);
   document.addEventListener('click', closeAll);
   container.querySelectorAll('.dropdown-list').forEach(el => el.addEventListener('click', e => e.stopPropagation()));
 
-  // ── Search
+  // Search
   container.querySelectorAll('.search-input').forEach(el => {
     el.addEventListener('input', e => { searchQuery = e.target.value; renderActionsPage(container); });
     setTimeout(() => el.focus(), 0);
   });
 
-  // ── Select dropdown items
+  // Select dropdown items
   container.querySelectorAll('.dropdown-item').forEach(item => {
     item.addEventListener('click', () => {
       const { id, type, index } = item.dataset;
       const idx = parseInt(index ?? 0);
       if (type === 'channel') {
-        if (id === 'all') {
-          currentFormState.channels = ['all'];
-        } else {
+        if (id === 'all') currentFormState.channels = ['all'];
+        else {
           currentFormState.channels = currentFormState.channels.filter(c => c !== 'all');
           if (currentFormState.channels.includes(id)) currentFormState.channels = currentFormState.channels.filter(c => c !== id);
           else currentFormState.channels.push(id);
@@ -435,23 +507,12 @@ function attachEvents(container) {
     });
   });
 
-  // ── Clear buttons
   container.querySelectorAll('.clear-when').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      currentFormState.whens[parseInt(btn.dataset.index)] = { condition_id: '', params: {} };
-      renderActionsPage(container);
-    });
+    btn.addEventListener('click', e => { e.stopPropagation(); currentFormState.whens[parseInt(btn.dataset.index)] = { condition_id: '', params: {} }; renderActionsPage(container); });
   });
   container.querySelectorAll('.clear-do').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      currentFormState.dos[parseInt(btn.dataset.index)] = { action_id: '', params: {} };
-      renderActionsPage(container);
-    });
+    btn.addEventListener('click', e => { e.stopPropagation(); currentFormState.dos[parseInt(btn.dataset.index)] = { action_id: '', params: {} }; renderActionsPage(container); });
   });
-
-  // ── Channel tag remove
   container.querySelectorAll('.tag-remove').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
@@ -461,7 +522,7 @@ function attachEvents(container) {
     });
   });
 
-  // ── Row remove buttons
+  // Row +/- buttons
   container.querySelectorAll('.row-minus-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
@@ -476,32 +537,13 @@ function attachEvents(container) {
       renderActionsPage(container);
     });
   });
+  container.querySelector('#add-when-btn')?.addEventListener('click', e => { e.stopPropagation(); currentFormState.whens.push({ condition_id: '', params: {} }); renderActionsPage(container); });
+  container.querySelector('#add-do-btn')?.addEventListener('click', e => { e.stopPropagation(); currentFormState.dos.push({ action_id: '', params: {} }); renderActionsPage(container); });
 
-  // ── Add WHEN / Add DO
-  const addWhenBtn = container.querySelector('#add-when-btn');
-  if (addWhenBtn) {
-    addWhenBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      currentFormState.whens.push({ condition_id: '', params: {} });
-      renderActionsPage(container);
-    });
-  }
-  const addDoBtn = container.querySelector('#add-do-btn');
-  if (addDoBtn) {
-    addDoBtn.addEventListener('click', e => {
-      e.stopPropagation();
-      currentFormState.dos.push({ action_id: '', params: {} });
-      renderActionsPage(container);
-    });
-  }
+  // Logic select
+  container.querySelector('#logic-select')?.addEventListener('change', e => { currentFormState.logic = e.target.value; });
 
-  // ── Logic select
-  const logicSel = container.querySelector('#logic-select');
-  if (logicSel) {
-    logicSel.addEventListener('change', e => { currentFormState.logic = e.target.value; });
-  }
-
-  // ── Param inputs
+  // Param inputs
   container.querySelectorAll('.param-input').forEach(el => {
     el.addEventListener('input', e => {
       const { type, row, key } = e.target.dataset;
@@ -511,85 +553,28 @@ function attachEvents(container) {
     });
   });
 
-  // ── Save rule
+  // Save
   container.querySelector('#save-rule')?.addEventListener('click', () => {
-    if (!isFormValid()) {
-      window.showToast('Vui lòng chọn cả điều kiện KHI và hành động THỰC HIỆN.', 'error');
-      return;
-    }
-    // Filter out empty rows
-    const cleanedWhens = currentFormState.whens.filter(w => w.condition_id);
-    const cleanedDos   = currentFormState.dos.filter(d => d.action_id);
+    if (!isFormValid()) { window.showToast && window.showToast('Please select a WHEN condition and DO action.', 'error'); return; }
     const payload = {
       channels: currentFormState.channels,
-      whens: cleanedWhens,
-      logic: cleanedWhens.length > 1 ? currentFormState.logic : 'any',
-      dos: cleanedDos,
+      whens: currentFormState.whens.filter(w => w.condition_id),
+      logic: currentFormState.whens.filter(w => w.condition_id).length > 1 ? currentFormState.logic : 'any',
+      dos: currentFormState.dos.filter(d => d.action_id),
     };
-
     if (editingRuleId) {
       store.updateRule(editingRuleId, payload);
-      editingRuleId = null;
-      window.showToast('✓ Đã cập nhật quy tắc thành công');
+      window.showToast && window.showToast('✓ Rule updated');
     } else {
       store.addRule(payload);
-      window.showToast('✓ Đã lưu quy tắc thành công');
+      window.showToast && window.showToast('✓ Rule saved');
     }
-    currentFormState = freshState();
+    closeForm();
     renderActionsPage(container);
   });
 
-  // ── Cancel edit
-  container.querySelector('#cancel-edit')?.addEventListener('click', () => {
-    editingRuleId = null;
-    currentFormState = freshState();
-    renderActionsPage(container);
-  });
-
-  // ── Rule card actions
-  container.querySelectorAll('.rule-card').forEach(card => {
-    const id = card.dataset.id;
-    card.querySelector('.toggle-rule')?.addEventListener('change', () => {
-      store.toggleRuleEnabled(id);
-      renderActionsPage(container);
-    });
-
-    const deleteBtn   = card.querySelector('.delete-btn');
-    const actionsArea = card.querySelector('.action-buttons');
-    const confirmArea = card.querySelector('.confirm-delete-area');
-
-    deleteBtn?.addEventListener('click', e => {
-      e.stopPropagation();
-      actionsArea.classList.add('hidden');
-      confirmArea.classList.remove('hidden');
-    });
-    card.querySelector('.cancel-delete')?.addEventListener('click', e => {
-      e.stopPropagation();
-      actionsArea.classList.remove('hidden');
-      confirmArea.classList.add('hidden');
-    });
-    card.querySelector('.confirm-delete')?.addEventListener('click', e => {
-      e.stopPropagation();
-      store.deleteRule(id);
-      window.showToast('✓ Đã xóa quy tắc');
-      renderActionsPage(container);
-    });
-
-    card.querySelector('.edit-btn')?.addEventListener('click', e => {
-      e.stopPropagation();
-      const rule = store.getRuleById(id);
-      if (!rule) return;
-      editingRuleId = id;
-      currentFormState = {
-        channels: [...(rule.channels || ['all'])],
-        whens: JSON.parse(JSON.stringify(rule.whens || [{ condition_id: '', params: {} }])),
-        logic: rule.logic || 'any',
-        dos: JSON.parse(JSON.stringify(rule.dos || [{ action_id: '', params: {} }])),
-      };
-      renderActionsPage(container);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  });
+  // Cancel
+  container.querySelector('#cancel-form')?.addEventListener('click', () => { closeForm(); renderActionsPage(container); });
 
   if (window.lucide) window.lucide.createIcons();
 }
