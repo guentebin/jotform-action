@@ -6,12 +6,12 @@ const STORAGE_KEY = 'jotform_agent_builder_v1';
 
 const DEFAULT_DATA = {
   config: {
-    name: 'My New Agent',
+    name: 'Agent của tôi',
     persona: {
-      role: 'Helpful Assistant',
+      role: 'Trợ lý hữu ích',
       tone: 'Professional',
-      language: 'English',
-      instructions: 'You are a professional assistant. Always be polite and helpful.'
+      language: 'Vietnamese',
+      instructions: 'Bạn là một trợ lý chuyên nghiệp. Luôn lịch sự và sẵn sàng giúp đỡ.'
     },
     knowledge: {
       texts: [],

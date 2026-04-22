@@ -160,27 +160,27 @@ export async function processMessage(message, history) {
         break;
       case 'send_email':
         console.log('MOCK EMAIL SENT:', params);
-        results.metadata.push({ type: 'badge', label: 'Email Sent', icon: 'mail' });
+        results.metadata.push({ type: 'badge', label: 'Đã gửi Email', icon: 'mail' });
         break;
       case 'api_request':
         try {
           const body = params.method !== 'GET' ? params.body : undefined;
           await fetch(params.endpoint, { method: params.method, body });
-          results.metadata.push({ type: 'badge', label: 'API Call Success', icon: 'code' });
+          results.metadata.push({ type: 'badge', label: 'Gọi API thành công', icon: 'code' });
         } catch (e) {
-          results.metadata.push({ type: 'badge', label: 'API Call Failed', icon: 'alert-circle' });
+          results.metadata.push({ type: 'badge', label: 'Gọi API thất bại', icon: 'alert-circle' });
         }
         break;
       case 'push_notify':
         if ('Notification' in window) {
           if (Notification.permission === 'granted') {
             new Notification(params.title, { body: params.message });
-            results.metadata.push({ type: 'badge', label: 'Notification Sent', icon: 'bell' });
+            results.metadata.push({ type: 'badge', label: 'Đã gửi thông báo', icon: 'bell' });
           } else if (Notification.permission !== 'denied') {
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
               new Notification(params.title, { body: params.message });
-              results.metadata.push({ type: 'badge', label: 'Notification Sent', icon: 'bell' });
+              results.metadata.push({ type: 'badge', label: 'Đã gửi thông báo', icon: 'bell' });
             }
           }
         }

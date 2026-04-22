@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jotform AI Agent Builder</title>
+    <title>Trình xây dựng AI Agent - Jotform</title>
     <link rel="stylesheet" href="/css/variables.css">
     <link rel="stylesheet" href="/css/components.css">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -15,18 +15,18 @@
       <header class="app-header">
         <div class="header-left">
           <div class="logo-j">J</div>
-          <input type="text" id="agent-name" class="agent-name-input" value="My New Agent">
+          <input type="text" id="agent-name" class="agent-name-input" value="Agent của tôi">
         </div>
         
         <div class="header-center">
-          <div class="tab-link" data-tab="build">Build</div>
-          <div class="tab-link active" data-tab="train">Train</div>
-          <div class="tab-link" data-tab="publish">Publish</div>
+          <div class="tab-link" data-tab="build">XÂY DỰNG</div>
+          <div class="tab-link active" data-tab="train">HUẤN LUYỆN</div>
+          <div class="tab-link" data-tab="publish">XUẤT BẢN</div>
         </div>
         
         <div class="header-right">
           <div class="flex items-center gap-2">
-            <label for="preview-toggle" class="text-xs font-bold uppercase tracking-wider cursor-pointer opacity-70">Preview</label>
+            <label for="preview-toggle" class="text-xs font-bold uppercase tracking-wider cursor-pointer opacity-70">Xem trước</label>
             <label class="toggle-switch">
               <input type="checkbox" id="preview-toggle">
               <span class="slider"></span>
@@ -54,7 +54,7 @@
         <!-- PREVIEW PANEL -->
         <div id="preview-panel" class="preview-panel">
           <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-            <h3 class="font-bold">Live Preview</h3>
+            <h3 class="font-bold">Xem trước trực tiếp</h3>
             <button class="btn-icon" id="close-preview">
               <i data-lucide="x"></i>
             </button>
@@ -62,7 +62,7 @@
           <div class="flex-1 overflow-y-auto p-4" id="chat-container">
             <!-- Chat content will be rendered here -->
             <div class="text-center py-20 text-text-muted italic text-sm">
-              Start chatting to test your agent.
+              Bắt đầu chat để kiểm tra agent.
             </div>
           </div>
         </div>

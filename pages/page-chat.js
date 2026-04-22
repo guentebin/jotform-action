@@ -16,19 +16,19 @@ export function renderChatPage(container) {
       <div class="fade-in p-6 flex flex-col h-full bg-white">
         <div class="mb-8 text-center">
           <div class="logo-j mx-auto mb-4 w-12 h-12 text-xl font-bold">J</div>
-          <h2 class="text-xl font-bold mb-2">Connect Gemini API</h2>
-          <p class="text-sm text-text-muted px-4">To start chatting, please provide your Google AI Studio API Key.</p>
+          <h2 class="text-xl font-bold mb-2">Kết nối Gemini API</h2>
+          <p class="text-sm text-text-muted px-4">Nhập API Key từ Google AI Studio để bắt đầu chat.</p>
         </div>
 
         <div class="card space-y-4">
           <div>
             <label class="block text-xs font-bold uppercase text-text-muted mb-2">Google API Key</label>
-            <input type="password" id="temp-api-key" class="input" placeholder="Paste your AI Studio key here...">
+            <input type="password" id="temp-api-key" class="input" placeholder="Dán key Google AI Studio vào đây...">
           </div>
-          <button id="set-api-key-btn" class="btn btn-primary w-full py-3">Connect & Chat</button>
+          <button id="set-api-key-btn" class="btn btn-primary w-full py-3">Kết nối & Chat</button>
           
           <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-center block text-xs text-primary font-bold hover:underline">
-            <i data-lucide="external-link" class="inline w-3 h-3"></i> Get your key from AI Studio
+            <i data-lucide="external-link" class="inline w-3 h-3"></i> Lấy key từ AI Studio
           </a>
         </div>
       </div>
@@ -57,11 +57,11 @@ export function renderChatPage(container) {
           <div>
             <div class="text-sm font-bold">${config.name}</div>
             <div class="text-[10px] text-green-500 font-bold uppercase flex items-center gap-1">
-              <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Online
+              <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Trực tuyến
             </div>
           </div>
         </div>
-        <button id="clear-chat-btn" class="btn btn-icon text-gray-400 hover:text-red-500 transition-colors" title="Clear History">
+        <button id="clear-chat-btn" class="btn btn-icon text-gray-400 hover:text-red-500 transition-colors" title="Xóa lịch sử">
           <i data-lucide="refresh-cw" class="w-4 h-4"></i>
         </button>
       </div>
@@ -70,7 +70,7 @@ export function renderChatPage(container) {
       <div id="messages-window" class="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
         ${history.length === 0 ? `
           <div class="text-center py-10 opacity-30">
-            <p class="text-xs italic font-medium">Chat is empty. Send a message to start.</p>
+            <p class="text-xs italic font-medium">Chưa có tin nhắn. Hãy gửi gì đó để bắt đầu.</p>
           </div>
         ` : history.map(msg => renderMessage(msg)).join('')}
         <div id="typing-indicator" class="hidden">
@@ -87,11 +87,11 @@ export function renderChatPage(container) {
       <!-- Chat Footer -->
       <div class="p-4 bg-white border-t border-gray-100">
         <div class="flex items-center gap-2 mb-3 px-1">
-          <span class="text-[10px] font-bold text-text-muted uppercase tracking-wider">Active Automation:</span>
-          <span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">${rules.length} Rules</span>
+          <span class="text-[10px] font-bold text-text-muted uppercase tracking-wider">Tự động hóa đang bật:</span>
+          <span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">${rules.length} Quy tắc</span>
         </div>
         <form id="chat-input-form" class="flex items-center gap-2 relative">
-          <input type="text" id="chat-msg-input" class="input pr-12 rounded-full border-gray-200" placeholder="Ask your agent anything..." autocomplete="off">
+          <input type="text" id="chat-msg-input" class="input pr-12 rounded-full border-gray-200" placeholder="Hỏi agent bất cứ điều gì..." autocomplete="off">
           <button type="submit" class="absolute right-1 w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center hover:scale-105 transition-transform">
             <i data-lucide="arrow-up" class="w-5 h-5"></i>
           </button>

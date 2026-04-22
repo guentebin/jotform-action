@@ -13,7 +13,7 @@ const state = {
   activeTab: 'train',
   activePage: 'persona',
   isPreviewOpen: false,
-  agentName: 'My New Agent'
+  agentName: 'Agent của tôi'
 };
 
 const pageRenderers = {
@@ -21,9 +21,35 @@ const pageRenderers = {
   knowledge: renderKnowledgePage,
   actions: renderActionsPage,
   chat: renderChatPage,
-  tools: (container) => container.innerHTML = '<div class="fade-in"><h1>Tools</h1><p class="text-text-muted mt-4">Tools configuration coming soon...</p></div>',
-  forms: (container) => container.innerHTML = '<div class="fade-in"><h1>Forms</h1><p class="text-text-muted mt-4">Forms integration coming soon...</p></div>',
-  teach: (container) => container.innerHTML = '<div class="fade-in"><h1>Teach Your Agent</h1><p class="text-text-muted mt-4">Learning and fine-tuning tools coming soon...</p></div>'
+  tools: (container) => container.innerHTML = '<div class="fade-in"><h1>CÔNG CỤ</h1><p class="text-text-muted mt-4">Cấu hình công cụ đang được phát triển...</p></div>',
+  forms: (container) => container.innerHTML = '<div class="fade-in"><h1>BIỂU MẪU</h1><p class="text-text-muted mt-4">Tích hợp biểu mẫu đang được phát triển...</p></div>',
+  teach: (container) => container.innerHTML = '<div class="fade-in"><h1>HUẤN LUYỆN</h1><p class="text-text-muted mt-4">Công cụ học tập và tinh chỉnh đang được phát triển...</p></div>'
+};
+
+// Toast Utility
+window.showToast = (message, type = 'success') => {
+  let container = document.querySelector('.toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+  
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `
+    ${type === 'success' ? '<i data-lucide="check-circle" class="w-4 h-4"></i>' : '<i data-lucide="alert-circle" class="w-4 h-4"></i>'}
+    <span>${message}</span>
+  `;
+  container.appendChild(toast);
+  
+  if (window.lucide) window.lucide.createIcons();
+  
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(10px)';
+    setTimeout(() => toast.remove(), 300);
+  }, type === 'success' ? 2000 : 3000);
 };
 
 function init() {

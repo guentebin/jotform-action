@@ -22,8 +22,8 @@ export function renderActionsPage(container) {
     <div class="fade-in max-w-5xl mx-auto">
       <!-- HEADER -->
       <div class="section-title-area">
-        <h1>ACTIONS</h1>
-        <p class="text-text-muted">Direct your agent with automated rules and triggers.</p>
+        <h1>HÀNH ĐỘNG</h1>
+        <p class="text-text-muted">Thiết lập quy tắc tự động hóa hành vi của agent.</p>
       </div>
 
       <!-- RULE BUILDER -->
@@ -36,7 +36,7 @@ export function renderActionsPage(container) {
       <!-- SAVED RULES HEADER -->
       <div class="flex items-center justify-between mb-6">
         <div class="flex items-center gap-3">
-          <h2 class="text-lg font-bold">SAVED RULES</h2>
+          <h2 class="text-lg font-bold">QUY TẮC ĐÃ LƯU</h2>
           <span class="bg-gray-200 text-gray-700 text-xs font-bold px-2 py-1 rounded-full">${rules.length}</span>
         </div>
       </div>
@@ -59,8 +59,8 @@ function renderRuleBuilder() {
   return `
     <div class="card rule-builder-card">
       <!-- CHANNELS -->
-      <div class="mb-8">
-        <h3 class="text-xs font-bold uppercase text-text-muted mb-3">Channels</h3>
+      <div class="mb-12">
+        <h3 class="text-xs font-bold uppercase text-text-muted mb-3">KÊNH ÁP DỤNG</h3>
         <div class="custom-dropdown" id="dropdown-channels">
           <div class="dropdown-trigger ${activeDropdown === 'channels' ? 'active' : ''}">
             <div class="flex flex-wrap gap-2">
@@ -85,7 +85,7 @@ function renderRuleBuilder() {
       <!-- WHEN SECTION -->
       <div class="builder-section section-when">
         <div class="section-label">
-          <span class="badge badge-when">WHEN</span>
+          <span class="badge badge-when">KHI</span>
         </div>
         
         <div class="custom-dropdown" id="dropdown-when">
@@ -93,7 +93,7 @@ function renderRuleBuilder() {
             <div class="flex items-center gap-2">
               ${when && when.icon ? `<span>${when.icon}</span>` : ''}
               <span class="${!currentFormState.when.condition_id ? 'text-text-muted italic' : 'font-semibold'}">
-                ${when ? when.label : 'Select a trigger condition...'}
+                ${when ? when.label : 'Chọn điều kiện kích hoạt...'}
               </span>
             </div>
             <div class="flex items-center gap-2">
@@ -103,7 +103,7 @@ function renderRuleBuilder() {
           </div>
           <div class="dropdown-list ${activeDropdown === 'when' ? 'show' : ''}">
             <div class="dropdown-search">
-              <input type="text" class="input py-1 text-sm search-input" placeholder="Search triggers..." value="${activeDropdown === 'when' ? searchQuery : ''}">
+              <input type="text" class="input py-1 text-sm search-input" placeholder="Tìm điều kiện..." value="${activeDropdown === 'when' ? searchQuery : ''}">
             </div>
             ${window.WHEN_CONDITIONS
               .filter(c => !searchQuery || c.label.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -113,7 +113,7 @@ function renderRuleBuilder() {
                   ${c.icon ? `<span>${c.icon}</span> ` : ''}
                   ${c.label}
                 </div>
-                <div class="item-desc">${c.description || 'Automation trigger'}</div>
+                <div class="item-desc">${c.description || 'Kích hoạt tự động'}</div>
               </div>
             `).join('')}
           </div>
@@ -127,7 +127,7 @@ function renderRuleBuilder() {
       <!-- DO SECTION -->
       <div class="builder-section section-do">
         <div class="section-label">
-          <span class="badge badge-do">DO</span>
+          <span class="badge badge-do">THỰC HIỆN</span>
         </div>
 
         <div class="custom-dropdown" id="dropdown-do">
@@ -135,7 +135,7 @@ function renderRuleBuilder() {
             <div class="flex items-center gap-2">
               ${doa && doa.icon ? `<span>${doa.icon}</span>` : ''}
               <span class="${!currentFormState.do.action_id ? 'text-text-muted italic' : 'font-semibold'}">
-                ${doa ? doa.label : 'Select an action to perform...'}
+                ${doa ? doa.label : 'Chọn hành động thực hiện...'}
               </span>
             </div>
             <div class="flex items-center gap-2">
@@ -145,7 +145,7 @@ function renderRuleBuilder() {
           </div>
           <div class="dropdown-list ${activeDropdown === 'do' ? 'show' : ''}">
             <div class="dropdown-search">
-              <input type="text" class="input py-1 text-sm search-input" placeholder="Search actions..." value="${activeDropdown === 'do' ? searchQuery : ''}">
+              <input type="text" class="input py-1 text-sm search-input" placeholder="Tìm hành động..." value="${activeDropdown === 'do' ? searchQuery : ''}">
             </div>
             ${window.DO_ACTIONS
               .filter(a => !searchQuery || a.label.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -156,7 +156,7 @@ function renderRuleBuilder() {
                   ${a.badge ? `<span class="badge badge-do text-[8px] p-1">${a.badge}</span> ` : ''}
                   ${a.label}
                 </div>
-                <div class="item-desc">${a.description || `Execute ${a.label.toLowerCase()} logic`}</div>
+                <div class="item-desc">${a.description || `Thực thi logic ${a.label.toLowerCase()}`}</div>
               </div>
             `).join('')}
           </div>
@@ -168,8 +168,8 @@ function renderRuleBuilder() {
       </div>
 
       <div class="flex justify-end gap-3">
-        ${isEditing ? `<button class="btn btn-secondary" id="cancel-edit">Cancel</button>` : ''}
-        <button class="btn btn-primary" id="save-rule">${isEditing ? 'Update Rule' : 'Save Rule'}</button>
+        ${isEditing ? `<button class="btn btn-secondary" id="cancel-edit">Hủy</button>` : ''}
+        <button class="btn btn-primary" id="save-rule">${isEditing ? 'Cập nhật quy tắc' : 'Lưu quy tắc'}</button>
       </div>
     </div>
   `;
@@ -196,8 +196,8 @@ function renderRuleCard(rule) {
   const whenObj = window.WHEN_CONDITIONS.find(c => c.id === rule.when.condition_id);
   const doObj = window.DO_ACTIONS.find(a => a.id === rule.do.action_id);
   
-  const whenText = whenObj ? whenObj.label : 'Unknown';
-  const doText = doObj ? doObj.label : 'Unknown';
+  const whenText = whenObj ? whenObj.label : 'Không xác định';
+  const doText = doObj ? doObj.label : 'Không xác định';
   
   const whenValue = Object.values(rule.when.params).join(', ') || '';
   const doValue = Object.values(rule.do.params).join(', ') || '';
@@ -208,7 +208,7 @@ function renderRuleCard(rule) {
       <div class="flex items-start justify-between">
         <div class="flex-1 space-y-4">
           <div class="flex items-center gap-4">
-            <span class="badge badge-when">WHEN</span>
+            <span class="badge badge-when">KHI</span>
             <div class="rule-summary">
               <span class="rule-summary-text">${whenText}</span>
               ${whenValue ? `<span class="text-xs text-text-muted font-mono italic">"${truncate(whenValue, 50)}"</span>` : ''}
@@ -216,7 +216,7 @@ function renderRuleCard(rule) {
           </div>
           
           <div class="flex items-center gap-4">
-            <span class="badge badge-do">DO</span>
+            <span class="badge badge-do">THỰC HIỆN</span>
             <div class="rule-summary">
               <span class="rule-summary-text">${doText}</span>
               ${doValue ? `<span class="text-xs text-text-muted font-mono italic">"${truncate(doValue, 50)}"</span>` : ''}
@@ -235,15 +235,20 @@ function renderRuleCard(rule) {
             <input type="checkbox" class="toggle-rule" ${rule.enabled ? 'checked' : ''}>
             <span class="slider"></span>
           </label>
-          <div class="flex gap-1">
-            <button class="btn btn-icon edit-btn" title="Edit"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
-            <button class="btn btn-icon delete-btn text-red-500" title="Delete"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          <div class="flex gap-1 action-buttons">
+            <button class="btn btn-icon edit-btn" title="Chỉnh sửa"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+            <button class="btn btn-icon delete-btn text-red-500" title="Xóa"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+          </div>
+          <div class="hidden confirm-delete-area flex items-center gap-2">
+            <span class="text-[10px] font-bold text-red-600 uppercase">Xác nhận xóa?</span>
+            <button class="btn btn-xs btn-primary bg-red-600 border-red-600 hover:bg-red-700 confirm-delete" style="padding: 2px 8px; font-size: 10px;">Xóa</button>
+            <button class="btn btn-xs btn-secondary cancel-delete" style="padding: 2px 8px; font-size: 10px;">Hủy</button>
           </div>
         </div>
       </div>
       
       <div class="rule-meta">
-        <span>Created: ${new Date(rule.created_at).toLocaleDateString()}</span>
+        <span>Tạo lúc: ${new Date(rule.created_at).toLocaleDateString() + ' ' + new Date(rule.created_at).toLocaleTimeString([], {hour: '2-bit', minute:'2-bit'})}</span>
       </div>
     </div>
   `;
@@ -253,8 +258,8 @@ function renderEmptyState() {
   return `
     <div class="text-center py-16 opacity-30">
       <i data-lucide="zap-off" class="w-16 h-16 mx-auto mb-4"></i>
-      <p class="font-bold italic">No active rules defined yet.</p>
-      <p class="text-sm mt-2">Use the builder above to set up your first automation.</p>
+      <p class="font-bold italic">Chưa có quy tắc nào.</p>
+      <p class="text-sm mt-2">Dùng form phía trên để tạo quy tắc đầu tiên.</p>
     </div>
   `;
 }
@@ -262,16 +267,19 @@ function renderEmptyState() {
 function attachEvents(container) {
   // Toggle Dropdowns
   ['channels', 'when', 'do'].forEach(type => {
-    container.querySelector(`#dropdown-${type} .dropdown-trigger`).addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (activeDropdown === type) {
-        activeDropdown = null;
-      } else {
-        activeDropdown = type;
-        searchQuery = '';
-      }
-      renderActionsPage(container);
-    });
+    const trigger = container.querySelector(`#dropdown-${type} .dropdown-trigger`);
+    if (trigger) {
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (activeDropdown === type) {
+          activeDropdown = null;
+        } else {
+          activeDropdown = type;
+          searchQuery = '';
+        }
+        renderActionsPage(container);
+      });
+    }
   });
 
   // Global click to close dropdowns
@@ -292,7 +300,8 @@ function attachEvents(container) {
       searchQuery = e.target.value;
       renderActionsPage(container);
     });
-    el.focus();
+    // Use setTimeout to focus after render
+    setTimeout(() => el.focus(), 0);
   });
 
   // Select Items
@@ -331,9 +340,13 @@ function attachEvents(container) {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       const { type } = btn.dataset;
-      currentFormState[type].condition_id = '';
-      currentFormState[type].action_id = '';
-      currentFormState[type].params = {};
+      if (type === 'when') {
+        currentFormState.when.condition_id = '';
+        currentFormState.when.params = {};
+      } else if (type === 'do') {
+        currentFormState.do.action_id = '';
+        currentFormState.do.params = {};
+      }
       renderActionsPage(container);
     });
   });
@@ -360,15 +373,17 @@ function attachEvents(container) {
   // Save Rule
   container.querySelector('#save-rule').addEventListener('click', () => {
     if (!currentFormState.when.condition_id || !currentFormState.do.action_id) {
-      alert('Please select both a WHEN condition and a DO action.');
+      window.showToast('Vui lòng chọn cả điều kiện KHI và hành động THỰC HIỆN.', 'error');
       return;
     }
 
     if (editingRuleId) {
       store.updateRule(editingRuleId, currentFormState);
       editingRuleId = null;
+      window.showToast('✓ Đã cập nhật quy tắc');
     } else {
       store.addRule(currentFormState);
+      window.showToast('✓ Đã lưu quy tắc');
     }
     
     currentFormState = { channels: ['all'], when: { condition_id: '', params: {} }, do: { action_id: '', params: {} } };
@@ -392,13 +407,31 @@ function attachEvents(container) {
       store.toggleRuleEnabled(id);
       renderActionsPage(container);
     });
-    card.querySelector('.delete-btn').addEventListener('click', (e) => {
+    
+    // Inline delete logic
+    const deleteBtn = card.querySelector('.delete-btn');
+    const actionsArea = card.querySelector('.action-buttons');
+    const confirmArea = card.querySelector('.confirm-delete-area');
+    
+    deleteBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      if (confirm('Are you sure you want to delete this rule?')) {
-        store.deleteRule(id);
-        renderActionsPage(container);
-      }
+      actionsArea.classList.add('hidden');
+      confirmArea.classList.remove('hidden');
     });
+    
+    card.querySelector('.cancel-delete').addEventListener('click', (e) => {
+      e.stopPropagation();
+      actionsArea.classList.remove('hidden');
+      confirmArea.classList.add('hidden');
+    });
+    
+    card.querySelector('.confirm-delete').addEventListener('click', (e) => {
+      e.stopPropagation();
+      store.deleteRule(id);
+      window.showToast('✓ Đã xóa quy tắc');
+      renderActionsPage(container);
+    });
+
     card.querySelector('.edit-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       const rule = store.getRuleById(id);
