@@ -52,11 +52,11 @@ export function renderActionsPage(container) {
         <p class="text-text-muted">Thiết lập quy tắc tự động hóa hành vi của agent.</p>
       </div>
       <div id="rule-builder-container" class="mb-10">${renderRuleBuilder()}</div>
-      <div class="divider"></div>
-      <div class="flex items-center justify-between mb-6">
-        <div class="flex items-center gap-3">
-          <h2 class="text-lg font-bold">QUY TẮC ĐÃ LƯU</h2>
-          <span class="bg-gray-200 text-gray-700 text-xs font-bold px-2 py-1 rounded-full">${rules.length}</span>
+      <div class="rules-section-header">
+        <div class="rules-section-title">
+          <span class="rules-section-icon">⚡</span>
+          <h2>QUY TẮC ĐÃ LƯU</h2>
+          <span class="rules-count-badge">${rules.length}</span>
         </div>
       </div>
       <div id="rules-list" class="pb-20">

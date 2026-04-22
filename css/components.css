@@ -404,3 +404,36 @@ input:checked + .slider:before { transform: translateX(20px); }
   background: #fef2f2; color: #dc2626; border-color: #fecaca;
 }
 .row-minus-btn:hover { background: #dc2626; color: white; }
+
+/* ── Rules section header ─────────────────────────────────────────────── */
+.rules-section-header {
+  margin: 32px 0 20px 0;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--border-light, #e2e2ee);
+}
+.rules-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rules-section-title h2 {
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-main, #1a1a2e);
+}
+.rules-section-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+.rules-count-badge {
+  background: var(--primary-purple, #2d1b69);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  min-width: 24px;
+  text-align: center;
+}
