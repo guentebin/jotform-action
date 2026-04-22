@@ -26,7 +26,7 @@
         
         <div class="header-right">
           <div class="flex items-center gap-2">
-            <span class="text-xs font-semibold opacity-70">Preview</span>
+            <label for="preview-toggle" class="text-xs font-bold uppercase tracking-wider cursor-pointer opacity-70">Preview</label>
             <label class="toggle-switch">
               <input type="checkbox" id="preview-toggle">
               <span class="slider"></span>
@@ -47,6 +47,9 @@
         <main id="main-content" class="app-content">
           <!-- Page content will be rendered here -->
         </main>
+
+        <!-- PREVIEW BACKDROP -->
+        <div id="preview-backdrop" class="preview-backdrop"></div>
 
         <!-- PREVIEW PANEL -->
         <div id="preview-panel" class="preview-panel">

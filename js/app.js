@@ -84,6 +84,13 @@ function attachEventListeners() {
     updateUI();
   });
 
+  // Backdrop click to close
+  document.getElementById('preview-backdrop').addEventListener('click', () => {
+    state.isPreviewOpen = false;
+    document.getElementById('preview-toggle').checked = false;
+    updateUI();
+  });
+
   // Agent Name
   const nameInput = document.getElementById('agent-name');
   nameInput.addEventListener('input', (e) => {
@@ -101,12 +108,13 @@ function updateUI() {
   const sidebar = document.getElementById('sidebar');
   sidebar.classList.toggle('hidden', state.activeTab !== 'train');
 
-  // Preview Panel
+  // Preview Panel & Backdrop
   const previewPanel = document.getElementById('preview-panel');
-  const wasOpen = previewPanel.classList.contains('open');
+  const backdrop = document.getElementById('preview-backdrop');
+  
   previewPanel.classList.toggle('open', state.isPreviewOpen);
+  backdrop.classList.toggle('visible', state.isPreviewOpen);
 
-  // If preview just opened or app initialized, render chat
   if (state.isPreviewOpen) {
     const chatContainer = document.getElementById('chat-container');
     if (chatContainer) renderChatPage(chatContainer);

@@ -11,6 +11,10 @@ let currentFormState = {
   do: { action_id: '', params: {} }
 };
 
+// Dropdown UI states
+let activeDropdown = null; // 'channels', 'when', 'do'
+let searchQuery = '';
+
 export function renderActionsPage(container) {
   const rules = store.getRules();
   
@@ -39,7 +43,7 @@ export function renderActionsPage(container) {
 
       <!-- RULES LIST -->
       <div id="rules-list" class="space-y-4 pb-20">
-        ${rules.length > 0 ? rules.map(rule => renderRuleCard(rule)).join('') : renderEmptyState()}
+        ${(rules && Array.isArray(rules) && rules.length > 0) ? rules.map(rule => renderRuleCard(rule)).join('') : renderEmptyState()}
       </div>
     </div>
   `;
@@ -54,19 +58,27 @@ function renderRuleBuilder() {
 
   return `
     <div class="card rule-builder-card">
-      <div class="mb-6">
-        <h3 class="font-bold mb-2">Rule Channels</h3>
-        <div class="flex flex-wrap gap-2 mb-3">
-          <select id="channel-select" class="input w-auto text-sm">
-            <option value="" disabled selected>Add channel...</option>
-            ${window.CHANNELS.map(c => `<option value="${c.id}">${c.icon} ${c.label}</option>`).join('')}
-          </select>
-        </div>
-        <div class="channel-tags">
-          ${currentFormState.channels.map(cid => {
-            const chan = window.CHANNELS.find(c => c.id === cid);
-            return `<span class="channel-tag">${chan.icon} ${chan.label} <span class="tag-remove" data-id="${cid}">×</span></span>`;
-          }).join('')}
+      <!-- CHANNELS -->
+      <div class="mb-8">
+        <h3 class="text-xs font-bold uppercase text-text-muted mb-3">Target Channels</h3>
+        <div class="custom-dropdown" id="dropdown-channels">
+          <div class="dropdown-trigger ${activeDropdown === 'channels' ? 'active' : ''}">
+            <div class="flex flex-wrap gap-2">
+              ${(currentFormState.channels || []).map(cid => {
+                const chan = window.CHANNELS.find(c => c.id === cid);
+                return chan ? `<span class="channel-tag-pill">${chan.icon} ${chan.label} <span class="tag-remove" data-id="${cid}">×</span></span>` : '';
+              }).join('')}
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
+          </div>
+          <div class="dropdown-list ${activeDropdown === 'channels' ? 'show' : ''}">
+            ${window.CHANNELS.map(c => `
+              <div class="dropdown-item flex-row items-center gap-3 ${currentFormState.channels.includes(c.id) ? 'selected' : ''}" data-id="${c.id}" data-type="channel">
+                <input type="checkbox" ${currentFormState.channels.includes(c.id) ? 'checked' : ''} class="pointer-events-none">
+                <span class="font-semibold">${c.icon} ${c.label}</span>
+              </div>
+            `).join('')}
+          </div>
         </div>
       </div>
 
@@ -74,14 +86,38 @@ function renderRuleBuilder() {
       <div class="builder-section section-when">
         <div class="section-label">
           <span class="badge badge-when">WHEN</span>
-          <span class="font-bold text-sm">Condition Trigger</span>
         </div>
-        <select id="when-select" class="input ${!currentFormState.when.condition_id ? 'border-dashed' : ''}">
-          <option value="" disabled ${!currentFormState.when.condition_id ? 'selected' : ''}>Select a trigger condition...</option>
-          ${window.WHEN_CONDITIONS.map(c => `
-            <option value="${c.id}" ${currentFormState.when.condition_id === c.id ? 'selected' : ''}>${c.label}</option>
-          `).join('')}
-        </select>
+        
+        <div class="custom-dropdown" id="dropdown-when">
+          <div class="dropdown-trigger ${activeDropdown === 'when' ? 'active' : ''}">
+            <div class="flex items-center gap-2">
+              ${when && when.icon ? `<span>${when.icon}</span>` : ''}
+              <span class="${!currentFormState.when.condition_id ? 'text-text-muted italic' : 'font-semibold'}">
+                ${when ? when.label : 'Select a trigger condition...'}
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              ${currentFormState.when.condition_id ? `<i data-lucide="x" class="w-4 h-4 clear-select" data-type="when"></i>` : ''}
+              <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
+            </div>
+          </div>
+          <div class="dropdown-list ${activeDropdown === 'when' ? 'show' : ''}">
+            <div class="dropdown-search">
+              <input type="text" class="input py-1 text-sm search-input" placeholder="Search triggers..." value="${activeDropdown === 'when' ? searchQuery : ''}">
+            </div>
+            ${window.WHEN_CONDITIONS
+              .filter(c => !searchQuery || c.label.toLowerCase().includes(searchQuery.toLowerCase()))
+              .map(c => `
+              <div class="dropdown-item ${currentFormState.when.condition_id === c.id ? 'selected' : ''}" data-id="${c.id}" data-type="when">
+                <div class="item-label">
+                  ${c.icon ? `<span>${c.icon}</span> ` : ''}
+                  ${c.label}
+                </div>
+                <div class="item-desc">${c.description || 'Automation trigger'}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
         
         <div id="when-params" class="params-grid">
           ${when ? renderParamsFields(when.params, 'when') : ''}
@@ -92,14 +128,39 @@ function renderRuleBuilder() {
       <div class="builder-section section-do">
         <div class="section-label">
           <span class="badge badge-do">DO</span>
-          <span class="font-bold text-sm">Target Action</span>
         </div>
-        <select id="do-select" class="input ${!currentFormState.do.action_id ? 'border-dashed' : ''}">
-          <option value="" disabled ${!currentFormState.do.action_id ? 'selected' : ''}>Select an action to perform...</option>
-          ${window.DO_ACTIONS.map(a => `
-            <option value="${a.id}" ${currentFormState.do.action_id === a.id ? 'selected' : ''}>${a.badge ? `(${a.badge}) ` : ''}${a.label}</option>
-          `).join('')}
-        </select>
+
+        <div class="custom-dropdown" id="dropdown-do">
+          <div class="dropdown-trigger ${activeDropdown === 'do' ? 'active' : ''}">
+            <div class="flex items-center gap-2">
+              ${doa && doa.icon ? `<span>${doa.icon}</span>` : ''}
+              <span class="${!currentFormState.do.action_id ? 'text-text-muted italic' : 'font-semibold'}">
+                ${doa ? doa.label : 'Select an action to perform...'}
+              </span>
+            </div>
+            <div class="flex items-center gap-2">
+              ${currentFormState.do.action_id ? `<i data-lucide="x" class="w-4 h-4 clear-select" data-type="do"></i>` : ''}
+              <i data-lucide="chevron-down" class="w-4 h-4 opacity-50"></i>
+            </div>
+          </div>
+          <div class="dropdown-list ${activeDropdown === 'do' ? 'show' : ''}">
+            <div class="dropdown-search">
+              <input type="text" class="input py-1 text-sm search-input" placeholder="Search actions..." value="${activeDropdown === 'do' ? searchQuery : ''}">
+            </div>
+            ${window.DO_ACTIONS
+              .filter(a => !searchQuery || a.label.toLowerCase().includes(searchQuery.toLowerCase()))
+              .map(a => `
+              <div class="dropdown-item ${currentFormState.do.action_id === a.id ? 'selected' : ''}" data-id="${a.id}" data-type="do">
+                <div class="item-label">
+                  ${a.icon ? `<span>${a.icon}</span> ` : ''}
+                  ${a.badge ? `<span class="badge badge-do text-[8px] p-1">${a.badge}</span> ` : ''}
+                  ${a.label}
+                </div>
+                <div class="item-desc">Execute ${a.label.toLowerCase()} logic</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
 
         <div id="do-params" class="params-grid">
           ${doa ? renderParamsFields(doa.params, 'do') : ''}
@@ -135,7 +196,6 @@ function renderRuleCard(rule) {
   const whenObj = window.WHEN_CONDITIONS.find(c => c.id === rule.when.condition_id);
   const doObj = window.DO_ACTIONS.find(a => a.id === rule.do.action_id);
   
-  // Format summary
   const whenText = whenObj ? whenObj.label : 'Unknown';
   const doText = doObj ? doObj.label : 'Unknown';
   
@@ -166,9 +226,9 @@ function renderRuleCard(rule) {
 
         <div class="flex items-center gap-4">
           <div class="flex gap-1">
-            ${rule.channels.map(cid => {
+            ${(rule.channels || []).map(cid => {
               const chan = window.CHANNELS.find(c => c.id === cid);
-              return `<span title="${chan.label}">${chan.icon}</span>`;
+              return chan ? `<span title="${chan.label}">${chan.icon}</span>` : '';
             }).join('')}
           </div>
           <label class="toggle-switch">
@@ -184,7 +244,6 @@ function renderRuleCard(rule) {
       
       <div class="rule-meta">
         <span>Created: ${new Date(rule.created_at).toLocaleDateString()}</span>
-        <span>ID: ${rule.id}</span>
       </div>
     </div>
   `;
@@ -201,53 +260,94 @@ function renderEmptyState() {
 }
 
 function attachEvents(container) {
-  // Channel Select
-  const channelSelect = container.querySelector('#channel-select');
-  if (channelSelect) {
-    channelSelect.addEventListener('change', (e) => {
-      const val = e.target.value;
-      if (!val) return;
-      
-      if (val === 'all') {
-        currentFormState.channels = ['all'];
+  // Toggle Dropdowns
+  ['channels', 'when', 'do'].forEach(type => {
+    container.querySelector(`#dropdown-${type} .dropdown-trigger`).addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (activeDropdown === type) {
+        activeDropdown = null;
       } else {
-        currentFormState.channels = currentFormState.channels.filter(c => c !== 'all');
-        if (!currentFormState.channels.includes(val)) {
-          currentFormState.channels.push(val);
-        }
+        activeDropdown = type;
+        searchQuery = '';
       }
       renderActionsPage(container);
     });
-  }
+  });
 
-  // Remove Tag
+  // Global click to close dropdowns
+  const closeDropdowns = () => {
+    if (activeDropdown) {
+      activeDropdown = null;
+      renderActionsPage(container);
+    }
+  };
+  document.addEventListener('click', closeDropdowns);
+  container.querySelectorAll('.dropdown-list').forEach(el => {
+    el.addEventListener('click', (e) => e.stopPropagation());
+  });
+
+  // Search
+  container.querySelectorAll('.search-input').forEach(el => {
+    el.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderActionsPage(container);
+    });
+    el.focus();
+  });
+
+  // Select Items
+  container.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const { id, type } = item.dataset;
+      
+      if (type === 'channel') {
+        if (id === 'all') {
+          currentFormState.channels = ['all'];
+        } else {
+          currentFormState.channels = currentFormState.channels.filter(c => c !== 'all');
+          if (currentFormState.channels.includes(id)) {
+            currentFormState.channels = currentFormState.channels.filter(c => c !== id);
+          } else {
+            currentFormState.channels.push(id);
+          }
+        }
+        if (currentFormState.channels.length === 0) currentFormState.channels = ['all'];
+      } else if (type === 'when') {
+        currentFormState.when.condition_id = id;
+        currentFormState.when.params = {};
+        activeDropdown = null;
+      } else if (type === 'do') {
+        currentFormState.do.action_id = id;
+        currentFormState.do.params = {};
+        activeDropdown = null;
+      }
+      
+      renderActionsPage(container);
+    });
+  });
+
+  // Clear selects
+  container.querySelectorAll('.clear-select').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const { type } = btn.dataset;
+      currentFormState[type].condition_id = '';
+      currentFormState[type].action_id = '';
+      currentFormState[type].params = {};
+      renderActionsPage(container);
+    });
+  });
+
+  // Tag Remove
   container.querySelectorAll('.tag-remove').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const id = e.target.dataset.id;
+      e.stopPropagation();
+      const id = btn.dataset.id;
       currentFormState.channels = currentFormState.channels.filter(c => c !== id);
       if (currentFormState.channels.length === 0) currentFormState.channels = ['all'];
       renderActionsPage(container);
     });
   });
-
-  // When/Do Select
-  const whenSelect = container.querySelector('#when-select');
-  if (whenSelect) {
-    whenSelect.addEventListener('change', (e) => {
-      currentFormState.when.condition_id = e.target.value;
-      currentFormState.when.params = {};
-      renderActionsPage(container);
-    });
-  }
-
-  const doSelect = container.querySelector('#do-select');
-  if (doSelect) {
-    doSelect.addEventListener('change', (e) => {
-      currentFormState.do.action_id = e.target.value;
-      currentFormState.do.params = {};
-      renderActionsPage(container);
-    });
-  }
 
   // Param Inputs
   container.querySelectorAll('.param-input').forEach(el => {
@@ -259,7 +359,6 @@ function attachEvents(container) {
 
   // Save Rule
   container.querySelector('#save-rule').addEventListener('click', () => {
-    // Validation
     if (!currentFormState.when.condition_id || !currentFormState.do.action_id) {
       alert('Please select both a WHEN condition and a DO action.');
       return;
@@ -272,7 +371,6 @@ function attachEvents(container) {
       store.addRule(currentFormState);
     }
     
-    // Reset Form
     currentFormState = { channels: ['all'], when: { condition_id: '', params: {} }, do: { action_id: '', params: {} } };
     renderActionsPage(container);
   });
@@ -290,14 +388,10 @@ function attachEvents(container) {
   // Rule Actions
   container.querySelectorAll('.rule-card').forEach(card => {
     const id = card.dataset.id;
-    
-    // Toggle
     card.querySelector('.toggle-rule').addEventListener('change', () => {
       store.toggleRuleEnabled(id);
       renderActionsPage(container);
     });
-
-    // Delete
     card.querySelector('.delete-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       if (confirm('Are you sure you want to delete this rule?')) {
@@ -305,13 +399,11 @@ function attachEvents(container) {
         renderActionsPage(container);
       }
     });
-
-    // Edit
     card.querySelector('.edit-btn').addEventListener('click', (e) => {
       e.stopPropagation();
       const rule = store.getRuleById(id);
       editingRuleId = id;
-      currentFormState = JSON.parse(JSON.stringify(rule)); // Deep copy
+      currentFormState = JSON.parse(JSON.stringify(rule));
       renderActionsPage(container);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });

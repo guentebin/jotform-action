@@ -25,7 +25,7 @@ export function renderChatPage(container) {
             <label class="block text-xs font-bold uppercase text-text-muted mb-2">Google API Key</label>
             <input type="password" id="temp-api-key" class="input" placeholder="Paste your AI Studio key here...">
           </div>
-          <button id="set-api-key-btn" class="btn btn-primary w-full py-3">Start Building</button>
+          <button id="set-api-key-btn" class="btn btn-primary w-full py-3">Connect & Chat</button>
           
           <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-center block text-xs text-primary font-bold hover:underline">
             <i data-lucide="external-link" class="inline w-3 h-3"></i> Get your key from AI Studio
