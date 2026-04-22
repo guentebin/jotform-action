@@ -26,27 +26,6 @@ let currentFormState = freshState();
 export function renderActionsPage(container) {
   const rules = store.getRules();
 
-  const scenarios = {
-    mine:       { label: '📝 Quy tắc của tôi',     items: [] },
-    sales:      { label: '🛒 Sales Assistant',       items: [] },
-    support:    { label: '🎧 Customer Support',      items: [] },
-    healthcare: { label: '🏥 Healthcare / Booking',  items: [] },
-  };
-  rules.forEach(rule => {
-    const key = rule.scenario || 'mine';
-    if (scenarios[key]) scenarios[key].items.push(rule);
-    else scenarios[key] = { label: '📦 ' + key, items: [rule] };
-  });
-
-  const renderGroup = (g) => g.items.length === 0 ? '' : `
-    <div class="scenario-group">
-      <div class="scenario-divider">
-        <span class="h-px bg-gray-200 flex-1"></span>
-        <span class="scenario-label">${g.label}</span>
-        <span class="h-px bg-gray-200 flex-1"></span>
-      </div>
-      <div class="rules-list">${g.items.map(renderRuleCard).join('')}</div>
-    </div>`;
 
   container.innerHTML = `
     <div class="fade-in actions-page">
@@ -74,9 +53,7 @@ export function renderActionsPage(container) {
 
       <!-- RULES LIST -->
       <div class="rules-content">
-        ${rules.length > 0
-          ? Object.values(scenarios).map(renderGroup).join('')
-          : (!formOpen ? renderEmptyState() : '')}
+        ${rules.length > 0 ? rules.map(renderRuleCard).join('') : (!formOpen ? renderEmptyState() : '')}
       </div>
     </div>`;
 
