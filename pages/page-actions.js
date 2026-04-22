@@ -248,7 +248,7 @@ function renderRuleCard(rule) {
       </div>
       
       <div class="rule-meta">
-        <span>Tạo lúc: ${new Date(rule.created_at).toLocaleDateString() + ' ' + new Date(rule.created_at).toLocaleTimeString([], {hour: '2-bit', minute:'2-bit'})}</span>
+        <span>Tạo lúc: ${new Date(rule.created_at).toLocaleDateString() + ' ' + new Date(rule.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
       </div>
     </div>
   `;
