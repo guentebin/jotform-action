@@ -60,7 +60,7 @@ function renderRuleBuilder() {
     <div class="card rule-builder-card">
       <!-- CHANNELS -->
       <div class="mb-8">
-        <h3 class="text-xs font-bold uppercase text-text-muted mb-3">Target Channels</h3>
+        <h3 class="text-xs font-bold uppercase text-text-muted mb-3">Channels</h3>
         <div class="custom-dropdown" id="dropdown-channels">
           <div class="dropdown-trigger ${activeDropdown === 'channels' ? 'active' : ''}">
             <div class="flex flex-wrap gap-2">
@@ -156,7 +156,7 @@ function renderRuleBuilder() {
                   ${a.badge ? `<span class="badge badge-do text-[8px] p-1">${a.badge}</span> ` : ''}
                   ${a.label}
                 </div>
-                <div class="item-desc">Execute ${a.label.toLowerCase()} logic</div>
+                <div class="item-desc">${a.description || `Execute ${a.label.toLowerCase()} logic`}</div>
               </div>
             `).join('')}
           </div>
@@ -177,7 +177,7 @@ function renderRuleBuilder() {
 
 function renderParamsFields(params, type) {
   return params.map(p => `
-    <div class="${p.type === 'textarea' ? 'params-full' : ''}">
+    <div class="${(p.type === 'textarea' || type === 'when') ? 'params-full' : ''}">
       <label class="block text-xs font-bold uppercase text-text-muted mb-1">${p.label}</label>
       ${p.type === 'textarea' ? `
         <textarea class="input h-24 param-input" data-type="${type}" data-key="${p.key}" placeholder="${p.placeholder}">${currentFormState[type].params[p.key] || ''}</textarea>

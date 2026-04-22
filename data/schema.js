@@ -96,42 +96,49 @@ window.DO_ACTIONS = [
     id: 'say_msg', 
     label: 'Say exact message', 
     icon: '💬',
+    description: 'Reply with a fixed, pre-written message — no AI generation',
     params: [{ key: 'message', label: 'Message', placeholder: 'Type your response...', type: 'textarea' }] 
   },
   { 
     id: 'ask_info', 
     label: 'Ask for information', 
     icon: '❓',
+    description: 'Proactively prompt the user to provide specific details',
     params: [{ key: 'what', label: 'What to ask', placeholder: 'e.g. What is your name?', type: 'text' }] 
   },
   { 
     id: 'show_btn', 
     label: 'Show button', 
     icon: '🔘',
+    description: 'Display clickable CTA buttons inside the chat',
     params: [{ key: 'buttons', label: 'Button labels', placeholder: 'e.g. Yes, No, Maybe (comma separated)', type: 'text' }] 
   },
   { 
     id: 'always_include', 
     label: 'Always include', 
     icon: '📎',
+    description: 'Append a note to every agent response under this condition',
     params: [{ key: 'content', label: 'Content to append', placeholder: 'Text to add at the end of response...', type: 'textarea' }] 
   },
   { 
     id: 'talk_about', 
     label: 'Talk about/mention', 
     icon: '📢',
+    description: 'Proactively introduce a topic once in the conversation',
     params: [{ key: 'topic', label: 'Topic', placeholder: 'e.g. our summer sale', type: 'text' }] 
   },
   { 
     id: 'dont_talk', 
     label: "Don't talk about/mention", 
     icon: '🚫',
+    description: 'Prevent agent from ever mentioning this topic',
     params: [{ key: 'topic', label: 'Topic to avoid', placeholder: 'e.g. competitors', type: 'text' }] 
   },
   { 
     id: 'send_email', 
     label: 'Send email', 
     icon: '📧',
+    description: 'Send an automated email to a recipient when triggered',
     params: [
       { key: 'to', label: 'Recipient', placeholder: 'email@example.com', type: 'text' },
       { key: 'subject', label: 'Subject', placeholder: 'Subject line...', type: 'text' },
@@ -142,6 +149,7 @@ window.DO_ACTIONS = [
     id: 'api_request', 
     label: 'Send API request', 
     icon: '🔗',
+    description: 'Call an external HTTP endpoint with custom payload',
     params: [
       { key: 'method', label: 'Method', type: 'select', options: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] },
       { key: 'endpoint', label: 'Endpoint (URL)', placeholder: 'https://api.example.com/data', type: 'text' },
@@ -153,24 +161,28 @@ window.DO_ACTIONS = [
     id: 'appointment', 
     label: 'Make an appointment', 
     icon: '📅',
+    description: 'Present a booking calendar link in chat',
     params: [{ key: 'url', label: 'Booking URL', placeholder: 'https://calendly.com/...', type: 'text' }] 
   },
   { 
     id: 'show_video', 
     label: 'Show video', 
     icon: '🎥',
+    description: 'Embed and play a video inside the chat',
     params: [{ key: 'url', label: 'Video URL', placeholder: 'https://youtube.com/watch?v=...', type: 'text' }] 
   },
   { 
     id: 'list_items', 
     label: 'List of Items', 
     icon: '📋',
+    description: 'Display structured product/service cards',
     params: [{ key: 'items', label: 'Items (title | description)', placeholder: 'Item 1 | Description 1\nItem 2 | Description 2', type: 'textarea' }] 
   },
   { 
     id: 'kb_answer', 
     label: 'Answer Using Knowledge Base', 
     icon: '🧠',
+    description: 'Force agent to answer strictly from trained Knowledge Base',
     badge: 'New',
     params: [] 
   },
@@ -178,6 +190,7 @@ window.DO_ACTIONS = [
     id: 'push_notify', 
     label: 'Send Push Notification', 
     icon: '🔔',
+    description: 'Send a browser push notification to the user',
     badge: 'New',
     params: [
       { key: 'title', label: 'Title', placeholder: 'Notification title...', type: 'text' },
