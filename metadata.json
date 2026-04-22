@@ -1,0 +1,6 @@
+{
+  "name": "Jotform Agent Builder",
+  "description": "A concept clone of the Jotform AI Agent Builder featuring a rule-based action system (WHEN/DO), persona management, knowledge base, and live Gemini-powered chat integration.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}

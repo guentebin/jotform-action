@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jotform AI Agent Builder</title>
+    <link rel="stylesheet" href="/css/variables.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- HEADER -->
+      <header class="app-header">
+        <div class="header-left">
+          <div class="logo-j">J</div>
+          <input type="text" id="agent-name" class="agent-name-input" value="My New Agent">
+        </div>
+        
+        <div class="header-center">
+          <div class="tab-link" data-tab="build">Build</div>
+          <div class="tab-link active" data-tab="train">Train</div>
+          <div class="tab-link" data-tab="publish">Publish</div>
+        </div>
+        
+        <div class="header-right">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold opacity-70">Preview</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="preview-toggle">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </header>
+
+      <div class="app-body">
+        <!-- SIDEBAR -->
+        <aside id="sidebar" class="app-sidebar">
+          <nav class="sidebar-nav" id="sidebar-nav">
+            <!-- Sidebar items will be rendered here -->
+          </nav>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main id="main-content" class="app-content">
+          <!-- Page content will be rendered here -->
+        </main>
+
+        <!-- PREVIEW PANEL -->
+        <div id="preview-panel" class="preview-panel">
+          <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+            <h3 class="font-bold">Live Preview</h3>
+            <button class="btn-icon" id="close-preview">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+          <div class="flex-1 overflow-y-auto p-4" id="chat-container">
+            <!-- Chat content will be rendered here -->
+            <div class="text-center py-20 text-text-muted italic text-sm">
+              Start chatting to test your agent.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/data/schema.js"></script>
+    <script src="/js/app.js" type="module"></script>
+  </body>
+</html>
+
