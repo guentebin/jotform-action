@@ -18,6 +18,41 @@ let searchQuery = '';
 export function renderActionsPage(container) {
   const rules = store.getRules();
   
+  // Grouping logic
+  const scenarios = {
+    mine: { label: '📝 Quy tắc của tôi', items: [] },
+    sales: { label: '🛒 Sales Assistant', items: [] },
+    support: { label: '🎧 Customer Support', items: [] },
+    healthcare: { label: '🏥 Healthcare / Booking', items: [] }
+  };
+
+  rules.forEach(rule => {
+    const key = rule.scenario || 'mine';
+    if (scenarios[key]) {
+      scenarios[key].items.push(rule);
+    } else {
+      scenarios[key] = { label: '📦 ' + key.charAt(0).toUpperCase() + key.slice(1), items: [rule] };
+    }
+  });
+
+  const renderScenarioGroup = (group) => {
+    if (group.items.length === 0) return '';
+    return `
+      <div class="scenario-group mb-8">
+        <div class="scenario-header flex items-center gap-4 mb-4">
+          <span class="h-px bg-gray-200 flex-1"></span>
+          <span class="text-[11px] font-bold uppercase tracking-widest text-text-muted bg-slate-50 px-3 px-1.5 rounded-full border border-gray-100">${group.label}</span>
+          <span class="h-px bg-gray-200 flex-1"></span>
+        </div>
+        <div class="space-y-4">
+          ${group.items.map(rule => renderRuleCard(rule)).join('')}
+        </div>
+      </div>
+    `;
+  };
+
+  const hasRules = rules && Array.isArray(rules) && rules.length > 0;
+
   container.innerHTML = `
     <div class="fade-in max-w-5xl mx-auto">
       <!-- HEADER -->
@@ -42,8 +77,14 @@ export function renderActionsPage(container) {
       </div>
 
       <!-- RULES LIST -->
-      <div id="rules-list" class="space-y-4 pb-20">
-        ${(rules && Array.isArray(rules) && rules.length > 0) ? rules.map(rule => renderRuleCard(rule)).join('') : renderEmptyState()}
+      <div id="rules-list" class="pb-20">
+        ${hasRules ? `
+          ${renderScenarioGroup(scenarios.mine)}
+          ${renderScenarioGroup(scenarios.sales)}
+          ${renderScenarioGroup(scenarios.support)}
+          ${renderScenarioGroup(scenarios.healthcare)}
+          ${Object.keys(scenarios).filter(k => !['mine', 'sales', 'support', 'healthcare'].includes(k)).map(k => renderScenarioGroup(scenarios[k])).join('')}
+        ` : renderEmptyState()}
       </div>
     </div>
   `;
@@ -240,15 +281,15 @@ function renderRuleCard(rule) {
             <button class="btn btn-icon delete-btn text-red-500" title="Xóa"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
           </div>
           <div class="hidden confirm-delete-area flex items-center gap-2">
-            <span class="text-[10px] font-bold text-red-600 uppercase">Xác nhận xóa?</span>
-            <button class="btn btn-xs btn-primary bg-red-600 border-red-600 hover:bg-red-700 confirm-delete" style="padding: 2px 8px; font-size: 10px;">Xóa</button>
+            <span class="text-[10px] font-bold text-red-600 uppercase">Xác nhận?</span>
+            <button class="btn btn-xs btn-primary bg-red-600 border-red-600 hover:bg-red-700 confirm-delete" style="padding: 2px 8px; font-size: 10px;">Xác nhận</button>
             <button class="btn btn-xs btn-secondary cancel-delete" style="padding: 2px 8px; font-size: 10px;">Hủy</button>
           </div>
         </div>
       </div>
       
       <div class="rule-meta">
-        <span>Tạo lúc: ${new Date(rule.created_at).toLocaleDateString() + ' ' + new Date(rule.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+        <span>Tạo lúc: ${new Date(rule.created_at || Date.now()).toLocaleDateString() + ' ' + new Date(rule.created_at || Date.now()).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
       </div>
     </div>
   `;
@@ -282,13 +323,17 @@ function attachEvents(container) {
     }
   });
 
-  // Global click to close dropdowns
+  // Global click to close dropdowns and reset inline delete confirmations
   const closeDropdowns = () => {
     if (activeDropdown) {
       activeDropdown = null;
       renderActionsPage(container);
     }
+    // Reset all delete confirmations
+    container.querySelectorAll('.confirm-delete-area').forEach(el => el.classList.add('hidden'));
+    container.querySelectorAll('.action-buttons').forEach(el => el.classList.remove('hidden'));
   };
+  document.removeEventListener('click', closeDropdowns); // Prevent dupes
   document.addEventListener('click', closeDropdowns);
   container.querySelectorAll('.dropdown-list').forEach(el => {
     el.addEventListener('click', (e) => e.stopPropagation());
@@ -380,10 +425,10 @@ function attachEvents(container) {
     if (editingRuleId) {
       store.updateRule(editingRuleId, currentFormState);
       editingRuleId = null;
-      window.showToast('✓ Đã cập nhật quy tắc');
+      window.showToast('✓ Đã cập nhật quy tắc thành công');
     } else {
       store.addRule(currentFormState);
-      window.showToast('✓ Đã lưu quy tắc');
+      window.showToast('✓ Đã lưu quy tắc thành công');
     }
     
     currentFormState = { channels: ['all'], when: { condition_id: '', params: {} }, do: { action_id: '', params: {} } };

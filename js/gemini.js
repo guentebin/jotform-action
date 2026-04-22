@@ -190,7 +190,12 @@ export async function processMessage(message, history) {
 
   // If not intercepted by say_msg, call Gemini for general response
   if (!results.intercepted) {
-    results.text = await callGemini(message, history);
+    try {
+      results.text = await callGemini(message, history);
+    } catch (e) {
+      console.warn('Gemini response failed', e);
+      // Let the caller handle the empty text/fallback
+    }
   }
 
   // Add Always Include

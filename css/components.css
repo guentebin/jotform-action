@@ -146,8 +146,16 @@ body { font-family: var(--font-main); background: var(--bg-light); color: var(--
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  text-align: left;
   gap: 2px;
   transition: background 0.1s;
+}
+.dropdown-item.flex-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
 }
 .dropdown-item:hover { background: #f8f6ff; }
 .dropdown-item.selected { background: #f3f0ff; color: var(--primary-purple); }

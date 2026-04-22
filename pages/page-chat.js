@@ -55,7 +55,10 @@ export function renderChatPage(container) {
             ${config.name.charAt(0)}
           </div>
           <div>
-            <div class="text-sm font-bold">${config.name}</div>
+            <div class="flex items-center gap-2">
+              <div class="text-sm font-bold">${config.name}</div>
+              <button id="change-key-btn" class="text-[10px] text-primary hover:underline font-bold">Đổi key</button>
+            </div>
             <div class="text-[10px] text-green-500 font-bold uppercase flex items-center gap-1">
               <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Trực tuyến
             </div>
@@ -70,7 +73,7 @@ export function renderChatPage(container) {
       <div id="messages-window" class="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
         ${history.length === 0 ? `
           <div class="text-center py-10 opacity-30">
-            <p class="text-xs italic font-medium">Chưa có tin nhắn. Hãy gửi gì đó để bắt đầu.</p>
+            <p class="text-xs italic font-medium">Bắt đầu cuộc trò chuyện để kiểm tra agent.</p>
           </div>
         ` : history.map(msg => renderMessage(msg)).join('')}
         <div id="typing-indicator" class="hidden">
@@ -87,11 +90,11 @@ export function renderChatPage(container) {
       <!-- Chat Footer -->
       <div class="p-4 bg-white border-t border-gray-100">
         <div class="flex items-center gap-2 mb-3 px-1">
-          <span class="text-[10px] font-bold text-text-muted uppercase tracking-wider">Tự động hóa đang bật:</span>
-          <span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">${rules.length} Quy tắc</span>
+          <span class="text-[10px] font-bold text-text-muted uppercase tracking-wider">Tự động hóa:</span>
+          <span class="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold">⚡ ${rules.length} quy tắc đang bật</span>
         </div>
         <form id="chat-input-form" class="flex items-center gap-2 relative">
-          <input type="text" id="chat-msg-input" class="input pr-12 rounded-full border-gray-200" placeholder="Hỏi agent bất cứ điều gì..." autocomplete="off">
+          <input type="text" id="chat-msg-input" class="input pr-12 rounded-full border-gray-200" placeholder="Nhập tin nhắn..." autocomplete="off">
           <button type="submit" class="absolute right-1 w-9 h-9 bg-primary text-white rounded-full flex items-center justify-center hover:scale-105 transition-transform">
             <i data-lucide="arrow-up" class="w-5 h-5"></i>
           </button>
@@ -183,8 +186,10 @@ function attachChatEvents(container) {
       const history = store.getChatHistory();
       const result = await processMessage(text, history);
       
+      const agentText = result.text || '_(Phản hồi từ Gemini sẽ hiển thị ở đây — cần cấu hình Gemini API)_';
+      
       // Agent Message
-      store.addChatMessage('agent', result.text);
+      store.addChatMessage('agent', agentText);
       
       // Update history with metadata for the last message
       const updatedHistory = store.getChatHistory();
@@ -196,10 +201,18 @@ function attachChatEvents(container) {
     } catch (e) {
       console.error(e);
       typing.classList.add('hidden');
-      store.addChatMessage('agent', 'Error connecting to Gemini API. Please check your key.');
+      store.addChatMessage('agent', '_(Phản hồi từ Gemini sẽ hiển thị ở đây — cần cấu hình Gemini API)_');
       renderMessages(msgWindow);
     }
   };
+
+  const changeKeyBtn = container.querySelector('#change-key-btn');
+  if (changeKeyBtn) {
+    changeKeyBtn.addEventListener('click', () => {
+      store.setApiKey('');
+      renderChatPage(container);
+    });
+  }
 
   if (form) {
     form.addEventListener('submit', (e) => {
