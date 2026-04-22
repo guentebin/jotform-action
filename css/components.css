@@ -291,3 +291,115 @@ input:checked + .slider:before { transform: translateX(20px); }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+
+/* ── Multiple WHEN/DO rows ───────────────────────────────────────────── */
+.when-row, .do-row {
+  position: relative;
+  padding: 12px;
+  background: var(--bg-subtle, #f8f9fa);
+  border: 1px solid var(--border, #e2e2ee);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.row-remove-btn {
+  position: absolute; top: 8px; right: 8px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #fef2f2; color: #dc2626;
+  border: 1px solid #fecaca; font-size: 15px; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  z-index: 1;
+}
+.row-remove-btn:hover { background: #dc2626; color: white; }
+
+/* ── Logic banner ────────────────────────────────────────────────────── */
+.logic-banner {
+  display: flex; align-items: center; gap: 8px;
+  background: #1e1e2e; color: white;
+  padding: 8px 16px; border-radius: 8px;
+  font-size: 13px; font-weight: 500;
+}
+.logic-select {
+  background: rgba(255,255,255,0.15); color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 6px; padding: 3px 8px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+}
+
+/* ── Add condition/action buttons ────────────────────────────────────── */
+.add-condition-btn, .add-action-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 8px;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  border: 1.5px dashed var(--border, #e2e2ee);
+  background: transparent; color: var(--text-muted, #6b6b8a);
+  margin-top: 4px; transition: all 0.15s;
+  font-family: var(--font, Inter);
+}
+.add-condition-btn:hover { border-color: var(--color-when, #3b82f6); color: var(--color-when, #3b82f6); }
+.add-action-btn:hover   { border-color: var(--color-do, #8b5cf6);   color: var(--color-do, #8b5cf6); }
+
+/* ── Rule card multi-when/do badges ─────────────────────────────────── */
+.rule-when-list, .rule-do-list { display: flex; flex-direction: column; gap: 4px; }
+.rule-logic-badge-or  { background: #eff6ff; color: #2563eb; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; }
+.rule-logic-badge-and { background: #fff7ed; color: #c2410c; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 8px; }
+.badge-new { background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 600; padding: 1px 5px; border-radius: 6px; margin-left: 4px; }
+
+/* ── Action row layout (Jotform-style) ───────────────────────────────── */
+.action-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  margin-bottom: 2px;
+}
+.action-row-left {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  border-left: 3px solid #e2e2ee;
+  padding-left: 12px;
+  gap: 12px;
+  min-width: 0;
+}
+.section-when .action-row-left { border-left-color: var(--color-when, #3b82f6); }
+.section-do   .action-row-left { border-left-color: var(--color-do, #8b5cf6); }
+.action-row-label {
+  flex-shrink: 0;
+  padding-top: 10px;
+  min-width: 56px;
+}
+.action-row-content {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 0;
+}
+.action-row-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  padding-top: 8px;
+  padding-left: 8px;
+  flex-shrink: 0;
+}
+.row-action-spacer { width: 26px; height: 26px; display: block; }
+.row-action-btn {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  border: 1px solid;
+  font-size: 16px; line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  transition: all 0.12s;
+}
+.row-add-btn {
+  background: #eff6ff; color: #2563eb; border-color: #bfdbfe;
+}
+.row-add-btn:hover { background: #2563eb; color: white; }
+.row-minus-btn {
+  background: #fef2f2; color: #dc2626; border-color: #fecaca;
+}
+.row-minus-btn:hover { background: #dc2626; color: white; }
